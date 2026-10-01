@@ -11,25 +11,52 @@ class ProposalsRepository {
     return List<Map<String, dynamic>>.from(res.data['results'] ?? []);
   }
 
-  Future<Map<String, dynamic>> submitProposal(String campaignId, String pitch, String bidAmount) async {
+  Future<List<Map<String, dynamic>>> getCampaignProposals(
+      String campaignId) async {
+    final res = await _dio.get('/bidding/proposals/',
+        queryParameters: {'campaign': campaignId});
+    return List<Map<String, dynamic>>.from(res.data['results'] ?? []);
+  }
+
+  Future<Map<String, dynamic>> submitProposal(
+      String campaignId, String pitch, String bidAmount) async {
     final res = await _dio.post('/bidding/proposals/', data: {
-      'campaign_id': campaignId,
+      'campaign': campaignId,
       'pitch': pitch,
       'bid_amount': bidAmount,
     });
     return res.data as Map<String, dynamic>;
   }
 
-  Future<List<Map<String, dynamic>>> getNegotiationMessages(String proposalId) async {
-    final res = await _dio.get('/bidding/proposals/$proposalId/negotiation_messages/');
+  Future<List<Map<String, dynamic>>> getNegotiationMessages(
+      String proposalId) async {
+    final res = await _dio
+        .get('/bidding/proposals/$proposalId/negotiation_messages/');
     return List<Map<String, dynamic>>.from(res.data);
   }
 
-  Future<void> sendCounter(String proposalId, String body, {String? counterPrice}) async {
+  Future<void> sendCounter(String proposalId, String body,
+      {String? counterPrice}) async {
     await _dio.patch('/bidding/proposals/$proposalId/counter/', data: {
       'body': body,
-      if (counterPrice != null) 'counter_price': counterPrice,
+      if (counterPrice != null && counterPrice.isNotEmpty)
+        'counter_price': counterPrice,
     });
+  }
+
+  Future<void> acceptProposal(String proposalId) async {
+    await _dio.patch('/bidding/proposals/$proposalId/accept/');
+  }
+
+  Future<void> withdrawProposal(String proposalId) async {
+    await _dio.delete('/bidding/proposals/$proposalId/');
+  }
+
+  Future<List<Map<String, dynamic>>> getRoiForecast(
+      String campaignId) async {
+    final res = await _dio.get('/bidding/roi-forecast/',
+        queryParameters: {'campaign': campaignId});
+    return List<Map<String, dynamic>>.from(res.data['results'] ?? []);
   }
 }
 

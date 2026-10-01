@@ -16,6 +16,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordCtrl = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
+  bool _showPassword = false;
   String? _error;
 
   @override
@@ -27,15 +28,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() { _loading = true; _error = null; });
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
-      await ref.read(authProvider.notifier).login(_emailCtrl.text.trim(), _passwordCtrl.text);
+      await ref
+          .read(authProvider.notifier)
+          .login(_emailCtrl.text.trim(), _passwordCtrl.text);
       final role = ref.read(authProvider).role;
       if (mounted) {
         context.go(role == 'merchant' ? '/merchant' : '/marketplace');
       }
     } catch (_) {
-      setState(() => _error = 'Invalid email or password.');
+      if (mounted) setState(() => _error = 'Invalid email or password.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -45,47 +51,113 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 48),
-                const Text('XEASIFY', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, letterSpacing: 2)),
-                const SizedBox(height: 4),
-                Text('B2B Influencer Marketplace', style: TextStyle(color: kGray400, fontSize: 13)),
-                const SizedBox(height: 48),
+                const SizedBox(height: 64),
+                // Wordmark
+                const Text(
+                  'XEASIFY',
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -1,
+                    height: 1,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'B2B INFLUENCER MARKETPLACE',
+                  style: TextStyle(
+                    fontSize: 11,
+                    letterSpacing: 3,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                // Divider
+                Container(height: 1, color: kWhite),
+                const SizedBox(height: 40),
+                // Fields
                 TextFormField(
                   controller: _emailCtrl,
                   keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(color: kWhite, fontSize: 14),
                   decoration: const InputDecoration(labelText: 'EMAIL'),
-                  validator: (v) => (v == null || !v.contains('@')) ? 'Valid email required' : null,
+                  validator: (v) =>
+                      (v == null || !v.contains('@'))
+                          ? 'Valid email required'
+                          : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _passwordCtrl,
-                  obscureText: true,
+                  obscureText: !_showPassword,
                   style: const TextStyle(color: kWhite, fontSize: 14),
-                  decoration: const InputDecoration(labelText: 'PASSWORD'),
-                  validator: (v) => (v == null || v.isEmpty) ? 'Password required' : null,
+                  decoration: InputDecoration(
+                    labelText: 'PASSWORD',
+                    suffixIcon: GestureDetector(
+                      onTap: () =>
+                          setState(() => _showPassword = !_showPassword),
+                      child: Icon(
+                        _showPassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: kWhite,
+                        size: 18,
+                      ),
+                    ),
+                  ),
+                  validator: (v) =>
+                      (v == null || v.isEmpty) ? 'Password required' : null,
                 ),
                 if (_error != null) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
                   Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(border: Border.all(color: kGray700), borderRadius: BorderRadius.circular(4)),
-                    child: Text(_error!, style: TextStyle(color: kGray400, fontSize: 12)),
+                    padding: const EdgeInsets.all(14),
+                    decoration:
+                        BoxDecoration(border: Border.all(color: kWhite, width: 1)),
+                    child: Text(
+                      '⚠ $_error',
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: _loading ? null : _login,
                   child: _loading
-                      ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2, color: kBlack))
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: kBlack))
                       : const Text('SIGN IN'),
+                ),
+                const SizedBox(height: 40),
+                // Register links
+                Container(height: 1, color: kWhite),
+                const SizedBox(height: 24),
+                const Text(
+                  'NEW HERE?',
+                  style: TextStyle(
+                      fontSize: 10,
+                      letterSpacing: 2.5,
+                      fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton(
+                  onPressed: () => context.go('/register/creator'),
+                  child: const Text('JOIN AS CREATOR'),
+                ),
+                const SizedBox(height: 10),
+                OutlinedButton(
+                  onPressed: () => context.go('/register/merchant'),
+                  child: const Text('JOIN AS MERCHANT'),
                 ),
               ],
             ),

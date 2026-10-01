@@ -3,35 +3,58 @@ import '../core/theme.dart';
 
 class StatusChip extends StatelessWidget {
   final String status;
-
   const StatusChip({super.key, required this.status});
 
   static const _labels = {
     'draft': 'DRAFT',
-    'escrow_pending': 'ESCROW PENDING',
+    'escrow_pending': 'PENDING ESCROW',
     'active': 'ACTIVE',
     'in_review': 'IN REVIEW',
     'completed': 'COMPLETED',
     'disputed': 'DISPUTED',
     'submitted': 'SUBMITTED',
-    'counter_offered': 'COUNTER OFFERED',
+    'merchant_reviewing': 'REVIEWING',
+    'counter_offered': 'COUNTERED',
     'accepted': 'ACCEPTED',
     'rejected': 'REJECTED',
+    'withdrawn': 'WITHDRAWN',
+    'funded': 'FUNDED',
     'cooling': 'COOLING 48H',
+    'verification_pass': 'VERIFIED',
+    'payout_queued': 'PAYOUT QUEUED',
     'settled': 'SETTLED',
+    'flash': 'FLASH',
+    'cancelled': 'CANCELLED',
+  };
+
+  static const _positive = {
+    'active',
+    'accepted',
+    'settled',
+    'completed',
+    'verification_pass',
+    'payout_queued',
   };
 
   @override
   Widget build(BuildContext context) {
+    final key = status.toLowerCase();
+    final label = _labels[key] ?? status.toUpperCase();
+    final inverted = _positive.contains(key);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        border: Border.all(color: kGray600),
-        borderRadius: BorderRadius.circular(3),
+        color: inverted ? kWhite : kBlack,
+        border: Border.all(color: kWhite, width: 1),
       ),
       child: Text(
-        _labels[status] ?? status.toUpperCase(),
-        style: const TextStyle(color: kGray300, fontSize: 10, letterSpacing: 0.8),
+        label,
+        style: TextStyle(
+          color: inverted ? kBlack : kWhite,
+          fontSize: 9,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.5,
+        ),
       ),
     );
   }
