@@ -1,0 +1,53 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../core/dio_client.dart';
+
+class AccountsRepository {
+  final Dio _dio;
+  AccountsRepository(this._dio);
+
+  Future<Map<String, dynamic>> getMe() async {
+    final res = await _dio.get('/accounts/me/');
+    return res.data as Map<String, dynamic>;
+  }
+
+  Future<void> registerMerchant({
+    required String email,
+    required String password,
+    required String phone,
+    required String businessName,
+    required String gstin,
+  }) async {
+    await _dio.post('/accounts/register/merchant/', data: {
+      'email': email,
+      'password': password,
+      'phone': phone,
+      'business_name': businessName,
+      'gstin': gstin,
+    });
+  }
+
+  Future<void> registerCreator({
+    required String email,
+    required String password,
+    required String displayName,
+    required String primaryPlatform,
+  }) async {
+    await _dio.post('/accounts/register/creator/', data: {
+      'email': email,
+      'password': password,
+      'display_name': displayName,
+      'primary_platform': primaryPlatform,
+    });
+  }
+
+  Future<Map<String, dynamic>> updatePricing(
+      String priceMin, String priceMax) async {
+    final res = await _dio.patch('/accounts/creator/pricing/',
+        data: {'price_min': priceMin, 'price_max': priceMax});
+    return res.data as Map<String, dynamic>;
+  }
+}
+
+final accountsRepoProvider = Provider<AccountsRepository>(
+    (ref) => AccountsRepository(ref.read(dioProvider)));

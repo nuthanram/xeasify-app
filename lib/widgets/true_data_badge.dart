@@ -5,17 +5,17 @@ class TrueDataBadge extends StatelessWidget {
   const TrueDataBadge({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        border: Border.all(color: kNeon),
-        borderRadius: BorderRadius.circular(3),
-      ),
-      child: const Text(
-        '✦ TRUE DATA',
-        style: TextStyle(color: kNeon, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        decoration: BoxDecoration(
+            color: kWhite, border: Border.all(color: kWhite, width: 1)),
+        child: const Text(
+          '✦ TRUE DATA',
+          style: TextStyle(
+              color: kBlack,
+              fontSize: 9,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2),
+        ),
+      );
 }
