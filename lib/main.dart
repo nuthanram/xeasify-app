@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme.dart';
@@ -6,8 +7,10 @@ import 'services/fcm_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Firebase optional — app works without google-services.json in dev
-  await FCMService.initializeIfAvailable();
+  // Firebase not supported on web without web-specific config
+  if (!kIsWeb) {
+    await FCMService.initializeIfAvailable();
+  }
   runApp(const ProviderScope(child: XeasifyApp()));
 }
 
