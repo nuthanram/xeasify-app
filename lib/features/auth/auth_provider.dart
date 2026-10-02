@@ -45,6 +45,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
     );
   }
 
+  Future<void> socialLogin(String provider, String accessToken) async {
+    final result = await _repo.socialAuth(
+      provider: provider,
+      accessToken: accessToken,
+    );
+    await SecureStorage.saveAccessToken(result['access']);
+    await SecureStorage.saveRefreshToken(result['refresh']);
+    await SecureStorage.saveRole(result['role']);
+    await SecureStorage.saveUserId(result['user_id']);
+    state = AuthState(
+      accessToken: result['access'],
+      role: result['role'],
+      userId: result['user_id'],
+    );
+  }
+
   Future<void> logout() async {
     await _repo.logout();
     await SecureStorage.clear();

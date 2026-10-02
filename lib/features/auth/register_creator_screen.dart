@@ -2,8 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
-import '../../data/accounts_repository.dart';
+import 'auth_provider.dart';
 
+// ── Platform descriptors ────────────────────────────────────────────────────
+class _Platform {
+  final String id;
+  final String label;
+  final String sublabel;
+  final IconData icon;
+  // TODO: when adding native SDK packages, implement this per platform:
+  //   instagram → flutter_facebook_auth (instagram permissions)
+  //   facebook  → flutter_facebook_auth
+  //   youtube   → google_sign_in (youtube.readonly scope)
+  //   tiktok    → tiktok_flutter_auth or webview-based flow
+  const _Platform(this.id, this.label, this.sublabel, this.icon);
+}
+
+const _platforms = [
+  _Platform('instagram', 'INSTAGRAM', 'Instagram Creator / Business account', Icons.camera_alt_outlined),
+  _Platform('facebook', 'FACEBOOK', 'Facebook Page or Creator account', Icons.facebook_outlined),
+  _Platform('tiktok', 'TIKTOK', 'TikTok Creator account', Icons.music_note_outlined),
+  _Platform('youtube', 'YOUTUBE', 'YouTube Channel (Google account)', Icons.play_circle_outline),
+];
+
+// ── Screen ──────────────────────────────────────────────────────────────────
 class RegisterCreatorScreen extends ConsumerStatefulWidget {
   const RegisterCreatorScreen({super.key});
 
@@ -12,77 +34,97 @@ class RegisterCreatorScreen extends ConsumerStatefulWidget {
       _RegisterCreatorScreenState();
 }
 
-class _RegisterCreatorScreenState
-    extends ConsumerState<RegisterCreatorScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailCtrl = TextEditingController();
-  final _passCtrl = TextEditingController();
-  final _confirmCtrl = TextEditingController();
-  final _displayCtrl = TextEditingController();
-  String _platform = 'instagram';
-  bool _loading = false;
-  bool _showPass = false;
+class _RegisterCreatorScreenState extends ConsumerState<RegisterCreatorScreen> {
+  String? _loadingPlatform;
   String? _error;
 
-  @override
-  void dispose() {
-    _emailCtrl.dispose();
-    _passCtrl.dispose();
-    _confirmCtrl.dispose();
-    _displayCtrl.dispose();
-    super.dispose();
-  }
-
-  Future<void> _register() async {
-    if (!_formKey.currentState!.validate()) return;
+  Future<void> _socialLogin(String provider) async {
     setState(() {
-      _loading = true;
+      _loadingPlatform = provider;
       _error = null;
     });
     try {
-      await ref.read(accountsRepoProvider).registerCreator(
-            email: _emailCtrl.text.trim(),
-            password: _passCtrl.text,
-            displayName: _displayCtrl.text.trim(),
-            primaryPlatform: _platform,
-          );
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Account created. Sign in to get started.')),
-        );
-        context.go('/login');
+      // Step 1: Obtain access token from the native social SDK.
+      //
+      // Each platform needs its own package wired up in pubspec.yaml.
+      // Replace each TODO block below with the real SDK call.
+      final String? accessToken = await _acquirePlatformToken(provider);
+      if (accessToken == null) {
+        // User cancelled the OAuth flow — silent exit.
+        return;
       }
+
+      // Step 2: Exchange token with Xeasify backend (POST /accounts/auth/social/).
+      // On success the backend returns JWT pair + signup_state.
+      await ref.read(authProvider.notifier).socialLogin(provider, accessToken);
+
+      if (!mounted) return;
+
+      // Step 3: Navigate. signup_state may be SOCIAL_LINKED (needs metrics grant)
+      // or VERIFIED (full access). Both land in /marketplace for now; the
+      // marketplace screen can surface onboarding banners based on signup_state.
+      context.go('/marketplace');
+    } on SocialAuthException catch (e) {
+      setState(() => _error = e.message);
     } catch (_) {
-      setState(() => _error = 'Registration failed. Check your details.');
+      setState(() => _error = 'Sign-up failed. Please try again.');
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) setState(() => _loadingPlatform = null);
     }
   }
 
-  Widget _platformBtn(String value, String label) {
-    final selected = _platform == value;
-    return GestureDetector(
-      onTap: () => setState(() => _platform = value),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: selected ? kWhite : kBlack,
-          border: Border.all(color: kWhite, width: 1),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: selected ? kBlack : kWhite,
-              fontWeight: FontWeight.w700,
-              fontSize: 11,
-              letterSpacing: 2,
-            ),
-          ),
-        ),
-      ),
-    );
+  /// Returns the provider access token obtained from the native SDK,
+  /// or null if the user cancelled.
+  ///
+  /// Throws [SocialAuthException] on SDK errors.
+  Future<String?> _acquirePlatformToken(String provider) async {
+    switch (provider) {
+      case 'instagram':
+      case 'facebook':
+        // TODO: Add flutter_facebook_auth to pubspec.yaml, then:
+        //   final result = await FacebookAuth.instance.login(
+        //     permissions: provider == 'instagram'
+        //         ? ['instagram_basic', 'pages_show_list']
+        //         : ['public_profile', 'email'],
+        //   );
+        //   if (result.status == LoginStatus.cancelled) return null;
+        //   if (result.status != LoginStatus.success) {
+        //     throw SocialAuthException('Facebook sign-in failed: ${result.message}');
+        //   }
+        //   return result.accessToken!.token;
+        throw SocialAuthException(
+          '${provider[0].toUpperCase()}${provider.substring(1)} sign-in SDK not yet configured.\n'
+          'Add flutter_facebook_auth to pubspec.yaml.',
+        );
+
+      case 'youtube':
+        // TODO: Add google_sign_in to pubspec.yaml, then:
+        //   final googleUser = await GoogleSignIn(
+        //     scopes: ['https://www.googleapis.com/auth/youtube.readonly'],
+        //   ).signIn();
+        //   if (googleUser == null) return null;
+        //   final auth = await googleUser.authentication;
+        //   return auth.accessToken;
+        throw SocialAuthException(
+          'YouTube (Google) sign-in SDK not yet configured.\n'
+          'Add google_sign_in to pubspec.yaml.',
+        );
+
+      case 'tiktok':
+        // TODO: Add tiktok_flutter_auth (or implement webview-based OAuth), then:
+        //   final result = await TikTokAuth.instance.login(
+        //     scopes: ['user.info.basic', 'user.info.stats'],
+        //   );
+        //   if (result == null) return null;
+        //   return result.accessToken;
+        throw SocialAuthException(
+          'TikTok sign-in SDK not yet configured.\n'
+          'Add tiktok_flutter_auth to pubspec.yaml.',
+        );
+
+      default:
+        throw SocialAuthException('Unknown platform: $provider');
+    }
   }
 
   @override
@@ -98,113 +140,150 @@ class _RegisterCreatorScreenState
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'CREATOR',
+                style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'SIGN UP WITH YOUR SOCIAL ACCOUNT',
+                style: TextStyle(fontSize: 11, letterSpacing: 2),
+              ),
+              const SizedBox(height: 32),
+              Container(height: 1, color: kWhite),
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                    border: Border.all(color: kWhite.withValues(alpha: 0.3), width: 1)),
+                child: const Text(
+                  'Creators sign up using an existing Instagram, Facebook, TikTok, or YouTube account. '
+                  'No separate password is needed — your social identity is your login.',
+                  style: TextStyle(
+                      fontSize: 11,
+                      letterSpacing: 0.3,
+                      height: 1.6,
+                      color: kWhite),
+                ),
+              ),
+              const SizedBox(height: 32),
+              const Text(
+                'CHOOSE YOUR PRIMARY PLATFORM',
+                style: TextStyle(
+                    fontSize: 10,
+                    letterSpacing: 2.5,
+                    fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 16),
+              ..._platforms.map((p) => _PlatformTile(
+                    platform: p,
+                    loading: _loadingPlatform == p.id,
+                    disabled: _loadingPlatform != null,
+                    onTap: () => _socialLogin(p.id),
+                  )),
+              if (_error != null) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: kWhite, width: 1)),
+                  child: Text(
+                    '⚠ $_error',
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 32),
+              Container(height: 1, color: kWhite.withValues(alpha: 0.3)),
+              const SizedBox(height: 20),
+              const Text(
+                'Already have an account? Sign in using the same social platform you registered with.',
+                style: TextStyle(
+                    fontSize: 11, letterSpacing: 0.3, height: 1.6, color: kWhite),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Platform tile widget ────────────────────────────────────────────────────
+class _PlatformTile extends StatelessWidget {
+  final _Platform platform;
+  final bool loading;
+  final bool disabled;
+  final VoidCallback onTap;
+
+  const _PlatformTile({
+    required this.platform,
+    required this.loading,
+    required this.disabled,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: GestureDetector(
+        onTap: disabled ? null : onTap,
+        child: AnimatedOpacity(
+          opacity: disabled && !loading ? 0.4 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            decoration: BoxDecoration(
+              color: kBlack,
+              border: Border.all(color: kWhite, width: 1),
+            ),
+            child: Row(
               children: [
-                const Text(
-                  'CREATOR',
-                  style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -0.5),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'APPLY TO BRAND CAMPAIGNS',
-                  style: TextStyle(fontSize: 11, letterSpacing: 2),
-                ),
-                const SizedBox(height: 32),
-                Container(height: 1, color: kWhite),
-                const SizedBox(height: 32),
-                TextFormField(
-                  controller: _displayCtrl,
-                  style: const TextStyle(color: kWhite, fontSize: 14),
-                  decoration: const InputDecoration(labelText: 'DISPLAY NAME'),
-                  validator: (v) =>
-                      v == null || v.isEmpty ? 'Display name required' : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _emailCtrl,
-                  keyboardType: TextInputType.emailAddress,
-                  style: const TextStyle(color: kWhite, fontSize: 14),
-                  decoration: const InputDecoration(labelText: 'EMAIL'),
-                  validator: (v) =>
-                      (v == null || !v.contains('@'))
-                          ? 'Valid email required'
-                          : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _passCtrl,
-                  obscureText: !_showPass,
-                  style: const TextStyle(color: kWhite, fontSize: 14),
-                  decoration: InputDecoration(
-                    labelText: 'PASSWORD',
-                    suffixIcon: GestureDetector(
-                      onTap: () => setState(() => _showPass = !_showPass),
-                      child: Icon(
-                        _showPass
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        color: kWhite,
-                        size: 18,
-                      ),
-                    ),
-                  ),
-                  validator: (v) =>
-                      (v == null || v.length < 8) ? 'Min 8 characters' : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _confirmCtrl,
-                  obscureText: true,
-                  style: const TextStyle(color: kWhite, fontSize: 14),
-                  decoration:
-                      const InputDecoration(labelText: 'CONFIRM PASSWORD'),
-                  validator: (v) =>
-                      v != _passCtrl.text ? 'Passwords do not match' : null,
-                ),
-                const SizedBox(height: 32),
-                const Text(
-                  'PRIMARY PLATFORM',
-                  style: TextStyle(
-                      fontSize: 10,
-                      letterSpacing: 2.5,
-                      fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 12),
-                Row(children: [
-                  Expanded(child: _platformBtn('instagram', 'INSTAGRAM')),
-                  const SizedBox(width: 8),
-                  Expanded(child: _platformBtn('youtube', 'YOUTUBE')),
-                  const SizedBox(width: 8),
-                  Expanded(child: _platformBtn('both', 'BOTH')),
-                ]),
-                if (_error != null) ...[
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: kWhite, width: 1)),
-                    child: Text('⚠ $_error',
+                Icon(platform.icon, color: kWhite, size: 20),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'CONTINUE WITH ${platform.label}',
                         style: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w600)),
+                          color: kWhite,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        platform.sublabel,
+                        style: TextStyle(
+                          color: kWhite.withValues(alpha: 0.5),
+                          fontSize: 10,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: _loading ? null : _register,
-                  child: _loading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: kBlack))
-                      : const Text('CREATE CREATOR ACCOUNT'),
                 ),
+                if (loading)
+                  const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 1.5, color: kWhite),
+                  )
+                else
+                  Icon(Icons.arrow_forward,
+                      color: kWhite.withValues(alpha: 0.6), size: 16),
               ],
             ),
           ),
@@ -212,4 +291,10 @@ class _RegisterCreatorScreenState
       ),
     );
   }
+}
+
+// ── Exception type ──────────────────────────────────────────────────────────
+class SocialAuthException implements Exception {
+  final String message;
+  const SocialAuthException(this.message);
 }

@@ -20,6 +20,34 @@ class AuthRepository {
     };
   }
 
+  /// Creator-only. Posts the native SDK access_token to the backend social
+  /// auth endpoint and returns the resulting JWT pair + metadata.
+  ///
+  /// [provider] — "instagram" | "facebook" | "youtube" | "tiktok"
+  /// [accessToken] — short-lived token obtained from the native SDK on device
+  Future<Map<String, dynamic>> socialAuth({
+    required String provider,
+    required String accessToken,
+    String? displayName,
+  }) async {
+    final res = await _dio.post('/accounts/auth/social/', data: {
+      'provider': provider,
+      'access_token': accessToken,
+      if (displayName != null) 'display_name': displayName,
+    });
+    final data = res.data as Map<String, dynamic>;
+    final jwtPayload = _decodeJwt(data['access'] as String);
+    return {
+      'access': data['access'],
+      'refresh': data['refresh'],
+      'role': jwtPayload['role'] ?? 'creator',
+      'user_id': jwtPayload['user_id'] ?? '',
+      'signup_state': data['signup_state'] ?? '',
+      'needs_metrics_grant': data['needs_metrics_grant'] ?? false,
+      'needs_contact_verification': data['needs_contact_verification'] ?? false,
+    };
+  }
+
   Future<void> logout() async {
     final refresh = await SecureStorage.getRefreshToken();
     if (refresh != null) {

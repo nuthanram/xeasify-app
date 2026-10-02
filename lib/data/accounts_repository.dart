@@ -27,20 +27,6 @@ class AccountsRepository {
     });
   }
 
-  Future<void> registerCreator({
-    required String email,
-    required String password,
-    required String displayName,
-    required String primaryPlatform,
-  }) async {
-    await _dio.post('/accounts/register/creator/', data: {
-      'email': email,
-      'password': password,
-      'display_name': displayName,
-      'primary_platform': primaryPlatform,
-    });
-  }
-
   Future<Map<String, dynamic>> updatePricing(
       String priceMin, String priceMax) async {
     final res = await _dio.patch('/accounts/creator/pricing/',
