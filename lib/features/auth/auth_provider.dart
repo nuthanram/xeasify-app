@@ -6,16 +6,28 @@ class AuthState {
   final String? accessToken;
   final String? role;
   final String? userId;
+  // Monotonic creator onboarding state: social_linked → metrics_granted → verified
+  final String? signupState;
 
-  const AuthState({this.accessToken, this.role, this.userId});
+  const AuthState({this.accessToken, this.role, this.userId, this.signupState});
 
   bool get isAuthenticated => accessToken != null;
 
-  AuthState copyWith({String? accessToken, String? role, String? userId}) => AuthState(
-    accessToken: accessToken ?? this.accessToken,
-    role: role ?? this.role,
-    userId: userId ?? this.userId,
-  );
+  /// Creators must reach 'verified' before they can see campaigns.
+  bool get isCreatorVerified => signupState == 'verified';
+
+  AuthState copyWith({
+    String? accessToken,
+    String? role,
+    String? userId,
+    String? signupState,
+  }) =>
+      AuthState(
+        accessToken: accessToken ?? this.accessToken,
+        role: role ?? this.role,
+        userId: userId ?? this.userId,
+        signupState: signupState ?? this.signupState,
+      );
 }
 
 class AuthNotifier extends StateNotifier<AuthState> {
@@ -29,7 +41,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
     final token = await SecureStorage.getAccessToken();
     final role = await SecureStorage.getRole();
     final userId = await SecureStorage.getUserId();
-    if (token != null) state = AuthState(accessToken: token, role: role, userId: userId);
+    final signupState = await SecureStorage.getSignupState();
+    if (token != null) {
+      state = AuthState(
+        accessToken: token,
+        role: role,
+        userId: userId,
+        signupState: signupState,
+      );
+    }
   }
 
   Future<void> login(String email, String password) async {
@@ -54,11 +74,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
     await SecureStorage.saveRefreshToken(result['refresh']);
     await SecureStorage.saveRole(result['role']);
     await SecureStorage.saveUserId(result['user_id']);
+    await SecureStorage.saveSignupState(result['signup_state'] as String? ?? '');
     state = AuthState(
       accessToken: result['access'],
       role: result['role'],
       userId: result['user_id'],
+      signupState: result['signup_state'] as String?,
     );
+  }
+
+  /// Called by the marketplace screen after fetching /me/ to sync onboarding state.
+  Future<void> updateSignupState(String signupState) async {
+    await SecureStorage.saveSignupState(signupState);
+    state = state.copyWith(signupState: signupState);
   }
 
   Future<void> logout() async {

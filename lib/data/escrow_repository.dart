@@ -29,12 +29,25 @@ class EscrowRepository {
     return res.data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> topUpWallet(
-      String amount, String gatewayPaymentId) async {
+  /// Merchant wallet top-up via Razorpay.
+  /// Flutter receives all three Razorpay fields from the Razorpay SDK callback
+  /// after the user completes payment, then posts them here for server-side
+  /// signature verification before the wallet is credited.
+  Future<Map<String, dynamic>> topUpWallet({
+    required String razorpayPaymentId,
+    required String razorpayOrderId,
+    required String razorpaySignature,
+    required String amount,
+  }) async {
     final idempotencyKey = _generateUuid();
     final res = await _dio.post(
       '/escrow/wallet/topup/',
-      data: {'amount': amount, 'gateway_payment_id': gatewayPaymentId},
+      data: {
+        'razorpay_payment_id': razorpayPaymentId,
+        'razorpay_order_id': razorpayOrderId,
+        'razorpay_signature': razorpaySignature,
+        'amount': amount,
+      },
       options: Options(headers: {'X-Idempotency-Key': idempotencyKey}),
     );
     return res.data as Map<String, dynamic>;

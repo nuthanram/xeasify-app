@@ -68,7 +68,7 @@ class _State extends ConsumerState<NegotiationScreen> {
     if (_bodyCtrl.text.trim().isEmpty) return;
     setState(() => _sending = true);
     try {
-      await ref.read(proposalsRepoProvider).sendCounter(
+      await ref.read(proposalsRepoProvider).replyToNegotiation(
             widget.proposalId,
             _bodyCtrl.text.trim(),
             counterPrice: _priceCtrl.text.trim().isEmpty
@@ -205,7 +205,7 @@ class _State extends ConsumerState<NegotiationScreen> {
                           const TextInputType.numberWithOptions(decimal: true),
                       style: const TextStyle(fontSize: 13),
                       decoration: const InputDecoration(
-                          hintText: 'Counter price — optional (₹)',
+                          hintText: 'Propose a price — optional (₹)',
                           prefixText: '₹ '),
                     ),
                     const SizedBox(height: 12),

@@ -95,7 +95,19 @@ class _RegisterMerchantScreenState
                 ),
                 const SizedBox(height: 32),
                 Container(height: 1, color: kWhite),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: kWhite, width: 1)),
+                  child: const Text(
+                    'GSTIN is optional. With a GSTIN or corporate email you get a Standard account '
+                    '(verified badge, full marketplace access). Without one you get a Small '
+                    'account (upfront payment, AI-matched creators only).',
+                    style: TextStyle(fontSize: 11, letterSpacing: 0.3, height: 1.6),
+                  ),
+                ),
+                const SizedBox(height: 24),
                 _field('BUSINESS NAME', _businessCtrl,
                     validator: (v) => v == null || v.isEmpty
                         ? 'Business name required'
@@ -113,9 +125,7 @@ class _RegisterMerchantScreenState
                     validator: (v) =>
                         v == null || v.length < 10 ? 'Valid phone required' : null),
                 const SizedBox(height: 16),
-                _field('GSTIN', _gstinCtrl,
-                    validator: (v) =>
-                        v == null || v.isEmpty ? 'GSTIN required' : null),
+                _field('GSTIN (optional)', _gstinCtrl),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _passCtrl,

@@ -31,10 +31,21 @@ class ProposalsRepository {
   Future<List<Map<String, dynamic>>> getNegotiationMessages(
       String proposalId) async {
     final res = await _dio
-        .get('/bidding/proposals/$proposalId/negotiation_messages/');
+        .get('/bidding/proposals/$proposalId/negotiation-messages/');
     return List<Map<String, dynamic>>.from(res.data);
   }
 
+  /// Creator replies in the negotiation thread (can optionally propose a new price).
+  Future<void> replyToNegotiation(String proposalId, String body,
+      {String? counterPrice}) async {
+    await _dio.patch('/bidding/proposals/$proposalId/reply/', data: {
+      'body': body,
+      if (counterPrice != null && counterPrice.isNotEmpty)
+        'counter_price': counterPrice,
+    });
+  }
+
+  /// Merchant sends a counter offer on a creator's proposal.
   Future<void> sendCounter(String proposalId, String body,
       {String? counterPrice}) async {
     await _dio.patch('/bidding/proposals/$proposalId/counter/', data: {

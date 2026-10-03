@@ -8,6 +8,7 @@ import '../../widgets/xb_loader.dart';
 import '../../widgets/xb_empty.dart';
 import '../../widgets/xb_error.dart';
 import '../../services/location_service.dart';
+import '../auth/auth_provider.dart';
 
 class MarketplaceScreen extends ConsumerStatefulWidget {
   const MarketplaceScreen({super.key});
@@ -75,6 +76,8 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
       ),
       body: Column(
         children: [
+          // Onboarding banner — shown when creator hasn't completed verification
+          _OnboardingBanner(ref: ref),
           // Category filter strip
           if (_categories.isNotEmpty)
             Container(
@@ -124,6 +127,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
   }
 
   Widget _categoryPill(String? slug, String label) {
+
     final selected = _selectedCategory == slug;
     return GestureDetector(
       onTap: () => _filterByCategory(slug),
@@ -146,6 +150,49 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _OnboardingBanner extends StatelessWidget {
+  final WidgetRef ref;
+  const _OnboardingBanner({required this.ref});
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = ref.watch(authProvider);
+    if (auth.role != 'creator') return const SizedBox.shrink();
+    if (auth.signupState == 'verified' || auth.signupState == null) {
+      return const SizedBox.shrink();
+    }
+
+    final String message;
+    if (auth.signupState == 'social_linked') {
+      message = 'STEP 2 OF 3 — Grant metrics access so brands can see your reach stats.';
+    } else {
+      message = 'STEP 3 OF 3 — Verify your phone and email to start applying to campaigns.';
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color: kWhite,
+      child: Row(children: [
+        const Icon(Icons.info_outline, color: kBlack, size: 16),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            message,
+            style: const TextStyle(
+              color: kBlack,
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ]),
     );
   }
 }

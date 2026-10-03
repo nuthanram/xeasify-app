@@ -103,6 +103,9 @@ class _State extends ConsumerState<MerchantDashboardScreen> {
                     letterSpacing: -0.5),
               ),
               const SizedBox(height: 28),
+              // Verification status badge
+              _VerificationBadge(status: _me?['verification_status'] as String? ?? 'pending'),
+              const SizedBox(height: 12),
               // Wallet balance — hero metric
               XbMetricTile(
                 label: 'WALLET BALANCE',
@@ -147,6 +150,43 @@ class _State extends ConsumerState<MerchantDashboardScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _VerificationBadge extends StatelessWidget {
+  final String status;
+  const _VerificationBadge({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    final labels = {
+      'pending': ('VERIFICATION PENDING', false),
+      'identity_verified': ('IDENTITY VERIFIED', true),
+      'fully_verified': ('FULLY VERIFIED', true),
+      'rejected': ('VERIFICATION REJECTED', false),
+    };
+    final (label, ok) = labels[status] ?? ('UNKNOWN STATUS', false);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: ok ? kWhite : kBlack,
+        border: Border.all(color: kWhite, width: 1),
+      ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Icon(ok ? Icons.verified_outlined : Icons.hourglass_empty,
+            size: 12, color: ok ? kBlack : kWhite),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: TextStyle(
+            color: ok ? kBlack : kWhite,
+            fontSize: 9,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
+          ),
+        ),
+      ]),
     );
   }
 }
