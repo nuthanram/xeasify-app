@@ -2,6 +2,10 @@
 
 Newest entries first. Read this file before every change and add an entry with every change (see `.claude/skills/xeasify-main-only/SKILL.md`).
 
+## 2026-10-04 — Write full README
+- What changed: replaced the placeholder `README.md` with setup, backend/`API_BASE_URL` configuration, run/build commands, project layout, app flow, permissions, a step-by-step testing guide, contribution rules and known issues.
+- Why: new contributors had no instructions for running or testing the app. Known issues documented rather than fixed: broken template `test/widget_test.dart`, Firebase never initialised, no logout UI, CI/toolchain version mismatch.
+
 ## 2026-10-04 — Ask for location permission once on marketplace
 - What changed: `LocationService` gained `needsPrompt()`/`markPrompted()` (a one-time flag in `shared_preferences`); `MarketplaceScreen` shows an explanatory dialog on first open and requests the OS location permission only if the user taps Allow.
 - Why: `requestPermission()` existed but was never called, so GPS check-in could never run. Location stays optional: declining is remembered, the user is not asked again, and the app works without it.
