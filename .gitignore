@@ -3,6 +3,7 @@
 .flutter-plugins
 .flutter-plugins-dependencies
 build/
+android/.kotlin/
 *.g.dart
 *.freezed.dart
 
