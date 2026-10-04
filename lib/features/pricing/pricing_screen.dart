@@ -123,7 +123,7 @@ class _State extends ConsumerState<PricingScreen> {
                 )),
               ]),
             const SizedBox(height: 28),
-            Container(height: 1, color: kWhite),
+            Container(height: 1, color: kFg),
             const SizedBox(height: 24),
             const Text('NEW MIN PRICE',
                 style: TextStyle(
@@ -166,7 +166,7 @@ class _State extends ConsumerState<PricingScreen> {
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: kBlack))
+                          strokeWidth: 2, color: kBg))
                   : const Text('UPDATE PRICING'),
             ),
           ],

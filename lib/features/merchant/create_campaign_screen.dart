@@ -73,13 +73,13 @@ class _State extends ConsumerState<CreateCampaignScreen> {
       firstDate: now,
       lastDate: now.add(const Duration(days: 365)),
       builder: (ctx, child) => Theme(
-        data: ThemeData.dark().copyWith(
-          colorScheme: const ColorScheme.dark(
-              primary: kWhite,
-              onPrimary: kBlack,
-              surface: kBlack,
-              onSurface: kWhite),
-          dialogBackgroundColor: kBlack,
+        data: ThemeData.light().copyWith(
+          colorScheme: const ColorScheme.light(
+              primary: kFg,
+              onPrimary: kBg,
+              surface: kBg,
+              onSurface: kFg),
+          dialogBackgroundColor: kBg,
         ),
         child: child!,
       ),
@@ -161,15 +161,15 @@ class _State extends ConsumerState<CreateCampaignScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
-          color: sel ? kWhite : kBlack,
-          border: Border.all(color: kWhite, width: 1),
+          color: sel ? kFg : kBg,
+          border: Border.all(color: kFg, width: 1),
         ),
         child: Center(
           child: Text(
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: sel ? kBlack : kWhite,
+              color: sel ? kBg : kFg,
               fontSize: 9,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
@@ -207,7 +207,7 @@ class _State extends ConsumerState<CreateCampaignScreen> {
                 hintText: 'Describe the campaign goal, target audience, and content expectations...'),
           ),
           const SizedBox(height: 24),
-          Container(height: 1, color: kWhite),
+          Container(height: 1, color: kFg),
           const SizedBox(height: 20),
           // Budget
           _sectionLabel('BUDGET'),
@@ -257,7 +257,7 @@ class _State extends ConsumerState<CreateCampaignScreen> {
             decoration: const InputDecoration(hintText: '1–50'),
           ),
           const SizedBox(height: 24),
-          Container(height: 1, color: kWhite),
+          Container(height: 1, color: kFg),
           const SizedBox(height: 20),
           // Deliverable type
           _sectionLabel('CONTENT FORMAT'),
@@ -283,7 +283,7 @@ class _State extends ConsumerState<CreateCampaignScreen> {
             ]),
           ]),
           const SizedBox(height: 24),
-          Container(height: 1, color: kWhite),
+          Container(height: 1, color: kFg),
           const SizedBox(height: 20),
           // Flash campaign
           _sectionLabel('FLASH CAMPAIGN'),
@@ -312,7 +312,7 @@ class _State extends ConsumerState<CreateCampaignScreen> {
             ),
           ],
           const SizedBox(height: 24),
-          Container(height: 1, color: kWhite),
+          Container(height: 1, color: kFg),
           const SizedBox(height: 20),
           // Dates
           _sectionLabel('TIMELINE'),
@@ -323,7 +323,7 @@ class _State extends ConsumerState<CreateCampaignScreen> {
           const SizedBox(height: 10),
           _datePicker(context, 'CAMPAIGN END', _campaignEnd, 'end'),
           const SizedBox(height: 24),
-          Container(height: 1, color: kWhite),
+          Container(height: 1, color: kFg),
           const SizedBox(height: 20),
           // Optional fields
           _sectionLabel('OPTIONAL'),
@@ -343,13 +343,13 @@ class _State extends ConsumerState<CreateCampaignScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: _selectedCategory == null ? kWhite : kBlack,
-                      border: Border.all(color: kWhite, width: 1),
+                      color: _selectedCategory == null ? kFg : kBg,
+                      border: Border.all(color: kFg, width: 1),
                     ),
                     child: Text(
                       'NONE',
                       style: TextStyle(
-                        color: _selectedCategory == null ? kBlack : kWhite,
+                        color: _selectedCategory == null ? kBg : kFg,
                         fontSize: 9,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
@@ -366,13 +366,13 @@ class _State extends ConsumerState<CreateCampaignScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: sel ? kWhite : kBlack,
-                        border: Border.all(color: kWhite, width: 1),
+                        color: sel ? kFg : kBg,
+                        border: Border.all(color: kFg, width: 1),
                       ),
                       child: Text(
                         (cat['name'] as String? ?? '').toUpperCase(),
                         style: TextStyle(
-                          color: sel ? kBlack : kWhite,
+                          color: sel ? kBg : kFg,
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1.5,
@@ -406,7 +406,7 @@ class _State extends ConsumerState<CreateCampaignScreen> {
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: kBlack))
+                        strokeWidth: 2, color: kBg))
                 : const Text('CREATE CAMPAIGN'),
           ),
         ]),
@@ -426,7 +426,7 @@ class _State extends ConsumerState<CreateCampaignScreen> {
         onTap: () => _pickDate(context, field),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          decoration: BoxDecoration(border: Border.all(color: kWhite, width: 1)),
+          decoration: BoxDecoration(border: Border.all(color: kFg, width: 1)),
           child: Row(children: [
             Text(label,
                 style: const TextStyle(
@@ -440,7 +440,7 @@ class _State extends ConsumerState<CreateCampaignScreen> {
                     fontWeight:
                         value != null ? FontWeight.w700 : FontWeight.w400)),
             const SizedBox(width: 8),
-            const Icon(Icons.calendar_today_outlined, color: kWhite, size: 14),
+            const Icon(Icons.calendar_today_outlined, color: kFg, size: 14),
           ]),
         ),
       );

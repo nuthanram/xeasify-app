@@ -2,6 +2,10 @@
 
 Newest entries first. Read this file before every change and add an entry with every change (see `.claude/skills/xeasify-main-only/SKILL.md`).
 
+## 2026-10-04 — Invert theme: white background, black text
+- What changed: the black-on-white UI is now white-on-black inverted to a light theme. Colour constants `kBlack`/`kWhite` were renamed to meaning-based `kBg`/`kFg` across all screens and widgets, with `kBg = white` and `kFg = black` (`lib/core/theme.dart`). The theme now uses `Brightness.light`, `ColorScheme.light`, dark status-bar icons and a light base text theme; the date-picker theme in `create_campaign_screen.dart` matches. `android/app/src/main/res/values-night/styles.xml` now uses the light launch theme so phones in dark mode do not flash black on startup. README theme note updated.
+- Why: requested UI change. Screens were not restyled individually: every colour already came from the two constants, so flipping them inverts everything consistently.
+
 ## 2026-10-04 — Add first-run app tour for creators and merchants
 - What changed: new `lib/features/onboarding/app_tour_screen.dart` (4 role-specific slides, SKIP / NEXT / GET STARTED), `lib/services/tour_service.dart` (per-role "seen" flag in `shared_preferences`), a `/tour/:role` route in `lib/core/router.dart`, auto-open on first visit to the marketplace and merchant dashboard, and a `?` replay icon in both app bars. On the marketplace the location dialog now waits until the tour closes. Added `test/app_tour_test.dart` (6 passing tests) and updated `README.md`.
 - Why: new users did not know the creator verification steps, bidding/negotiation, or how escrow pays out. The tour is shown once per role, is skippable, and can be replayed.

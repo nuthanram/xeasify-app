@@ -94,12 +94,12 @@ class _RegisterMerchantScreenState
                   style: TextStyle(fontSize: 11, letterSpacing: 2),
                 ),
                 const SizedBox(height: 32),
-                Container(height: 1, color: kWhite),
+                Container(height: 1, color: kFg),
                 const SizedBox(height: 24),
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                      border: Border.all(color: kWhite, width: 1)),
+                      border: Border.all(color: kFg, width: 1)),
                   child: const Text(
                     'GSTIN is optional. With a GSTIN or corporate email you get a Standard account '
                     '(verified badge, full marketplace access). Without one you get a Small '
@@ -130,7 +130,7 @@ class _RegisterMerchantScreenState
                 TextFormField(
                   controller: _passCtrl,
                   obscureText: !_showPass,
-                  style: const TextStyle(color: kWhite, fontSize: 14),
+                  style: const TextStyle(color: kFg, fontSize: 14),
                   decoration: InputDecoration(
                     labelText: 'PASSWORD',
                     suffixIcon: GestureDetector(
@@ -139,7 +139,7 @@ class _RegisterMerchantScreenState
                         _showPass
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: kWhite,
+                        color: kFg,
                         size: 18,
                       ),
                     ),
@@ -152,7 +152,7 @@ class _RegisterMerchantScreenState
                 TextFormField(
                   controller: _confirmCtrl,
                   obscureText: true,
-                  style: const TextStyle(color: kWhite, fontSize: 14),
+                  style: const TextStyle(color: kFg, fontSize: 14),
                   decoration: const InputDecoration(labelText: 'CONFIRM PASSWORD'),
                   validator: (v) =>
                       v != _passCtrl.text ? 'Passwords do not match' : null,
@@ -162,7 +162,7 @@ class _RegisterMerchantScreenState
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                        border: Border.all(color: kWhite, width: 1)),
+                        border: Border.all(color: kFg, width: 1)),
                     child: Text('⚠ $_error',
                         style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.w600)),
@@ -176,7 +176,7 @@ class _RegisterMerchantScreenState
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: kBlack))
+                              strokeWidth: 2, color: kBg))
                       : const Text('CREATE MERCHANT ACCOUNT'),
                 ),
               ],
@@ -193,7 +193,7 @@ class _RegisterMerchantScreenState
       TextFormField(
         controller: ctrl,
         keyboardType: keyboard,
-        style: const TextStyle(color: kWhite, fontSize: 14),
+        style: const TextStyle(color: kFg, fontSize: 14),
         decoration: InputDecoration(labelText: label),
         validator: validator,
       );

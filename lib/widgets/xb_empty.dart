@@ -10,7 +10,7 @@ class XbEmpty extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(32),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Container(width: 48, height: 1, color: kWhite),
+            Container(width: 48, height: 1, color: kFg),
             const SizedBox(height: 16),
             Text(
               message,
@@ -18,7 +18,7 @@ class XbEmpty extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            Container(width: 48, height: 1, color: kWhite),
+            Container(width: 48, height: 1, color: kFg),
           ]),
         ),
       );

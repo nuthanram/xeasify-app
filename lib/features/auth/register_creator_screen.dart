@@ -156,12 +156,12 @@ class _RegisterCreatorScreenState extends ConsumerState<RegisterCreatorScreen> {
                 style: TextStyle(fontSize: 11, letterSpacing: 2),
               ),
               const SizedBox(height: 32),
-              Container(height: 1, color: kWhite),
+              Container(height: 1, color: kFg),
               const SizedBox(height: 24),
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                    border: Border.all(color: kWhite.withValues(alpha: 0.3), width: 1)),
+                    border: Border.all(color: kFg.withValues(alpha: 0.3), width: 1)),
                 child: const Text(
                   'Creators sign up using an existing Instagram, Facebook, TikTok, or YouTube account. '
                   'No separate password is needed — your social identity is your login.',
@@ -169,7 +169,7 @@ class _RegisterCreatorScreenState extends ConsumerState<RegisterCreatorScreen> {
                       fontSize: 11,
                       letterSpacing: 0.3,
                       height: 1.6,
-                      color: kWhite),
+                      color: kFg),
                 ),
               ),
               const SizedBox(height: 32),
@@ -192,7 +192,7 @@ class _RegisterCreatorScreenState extends ConsumerState<RegisterCreatorScreen> {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                      border: Border.all(color: kWhite, width: 1)),
+                      border: Border.all(color: kFg, width: 1)),
                   child: Text(
                     '⚠ $_error',
                     style: const TextStyle(
@@ -201,12 +201,12 @@ class _RegisterCreatorScreenState extends ConsumerState<RegisterCreatorScreen> {
                 ),
               ],
               const SizedBox(height: 32),
-              Container(height: 1, color: kWhite.withValues(alpha: 0.3)),
+              Container(height: 1, color: kFg.withValues(alpha: 0.3)),
               const SizedBox(height: 20),
               const Text(
                 'Already have an account? Sign in using the same social platform you registered with.',
                 style: TextStyle(
-                    fontSize: 11, letterSpacing: 0.3, height: 1.6, color: kWhite),
+                    fontSize: 11, letterSpacing: 0.3, height: 1.6, color: kFg),
               ),
             ],
           ),
@@ -242,12 +242,12 @@ class _PlatformTile extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             decoration: BoxDecoration(
-              color: kBlack,
-              border: Border.all(color: kWhite, width: 1),
+              color: kBg,
+              border: Border.all(color: kFg, width: 1),
             ),
             child: Row(
               children: [
-                Icon(platform.icon, color: kWhite, size: 20),
+                Icon(platform.icon, color: kFg, size: 20),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -256,7 +256,7 @@ class _PlatformTile extends StatelessWidget {
                       Text(
                         'CONTINUE WITH ${platform.label}',
                         style: const TextStyle(
-                          color: kWhite,
+                          color: kFg,
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
                           letterSpacing: 1.5,
@@ -266,7 +266,7 @@ class _PlatformTile extends StatelessWidget {
                       Text(
                         platform.sublabel,
                         style: TextStyle(
-                          color: kWhite.withValues(alpha: 0.5),
+                          color: kFg.withValues(alpha: 0.5),
                           fontSize: 10,
                           letterSpacing: 0.3,
                         ),
@@ -279,11 +279,11 @@ class _PlatformTile extends StatelessWidget {
                     width: 16,
                     height: 16,
                     child: CircularProgressIndicator(
-                        strokeWidth: 1.5, color: kWhite),
+                        strokeWidth: 1.5, color: kFg),
                   )
                 else
                   Icon(Icons.arrow_forward,
-                      color: kWhite.withValues(alpha: 0.6), size: 16),
+                      color: kFg.withValues(alpha: 0.6), size: 16),
               ],
             ),
           ),

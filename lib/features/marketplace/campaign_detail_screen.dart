@@ -129,7 +129,7 @@ class _State extends ConsumerState<CampaignDetailScreen> {
                           Container(
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
-                                border: Border.all(color: kWhite, width: 1)),
+                                border: Border.all(color: kFg, width: 1)),
                             child: Row(children: [
                               const Text('FORMAT',
                                   style: TextStyle(
@@ -152,7 +152,7 @@ class _State extends ConsumerState<CampaignDetailScreen> {
                             Container(
                               padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                  border: Border.all(color: kWhite, width: 1)),
+                                  border: Border.all(color: kFg, width: 1)),
                               child: Row(children: [
                                 const Text('COUPON',
                                     style: TextStyle(
@@ -169,7 +169,7 @@ class _State extends ConsumerState<CampaignDetailScreen> {
                             ),
                           ],
                           const SizedBox(height: 24),
-                          Container(height: 1, color: kWhite),
+                          Container(height: 1, color: kFg),
                           const SizedBox(height: 20),
                           // Description
                           Text(
@@ -182,7 +182,7 @@ class _State extends ConsumerState<CampaignDetailScreen> {
                           if (c['campaign_start'] != null ||
                               c['campaign_end'] != null) ...[
                             const SizedBox(height: 20),
-                            Container(height: 1, color: kWhite),
+                            Container(height: 1, color: kFg),
                             const SizedBox(height: 16),
                             const Text('CAMPAIGN WINDOW',
                                 style: TextStyle(
@@ -206,7 +206,7 @@ class _State extends ConsumerState<CampaignDetailScreen> {
                       right: 0,
                       child: Container(
                         padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                        color: kBlack,
+                        color: kBg,
                         child: ElevatedButton(
                           onPressed: () => context.push(
                               '/marketplace/${widget.campaignId}/apply'),

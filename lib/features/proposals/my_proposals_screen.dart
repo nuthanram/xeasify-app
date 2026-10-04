@@ -69,8 +69,8 @@ class _State extends ConsumerState<MyProposalsScreen> {
                   ? const XbEmpty(message: 'No proposals submitted yet.\nApply to campaigns from the Marketplace.')
                   : RefreshIndicator(
                       onRefresh: _load,
-                      color: kWhite,
-                      backgroundColor: kBlack,
+                      color: kFg,
+                      backgroundColor: kBg,
                       child: ListView.builder(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
                         itemCount: _proposals.length,
@@ -117,7 +117,7 @@ class _ProposalCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 1),
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(border: Border.all(color: kWhite, width: 1)),
+      decoration: BoxDecoration(border: Border.all(color: kFg, width: 1)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Expanded(
@@ -149,7 +149,7 @@ class _ProposalCard extends StatelessWidget {
         // Action buttons
         if (status == 'counter_offered') ...[
           const SizedBox(height: 14),
-          Container(height: 1, color: kWhite),
+          Container(height: 1, color: kFg),
           const SizedBox(height: 10),
           SizedBox(
             width: double.infinity,
@@ -160,7 +160,7 @@ class _ProposalCard extends StatelessWidget {
           ),
         ] else if (status == 'accepted') ...[
           const SizedBox(height: 14),
-          Container(height: 1, color: kWhite),
+          Container(height: 1, color: kFg),
           const SizedBox(height: 10),
           SizedBox(
             width: double.infinity,
@@ -171,7 +171,7 @@ class _ProposalCard extends StatelessWidget {
           ),
         ] else if (status == 'submitted') ...[
           const SizedBox(height: 14),
-          Container(height: 1, color: kWhite),
+          Container(height: 1, color: kFg),
           const SizedBox(height: 10),
           SizedBox(
             width: double.infinity,

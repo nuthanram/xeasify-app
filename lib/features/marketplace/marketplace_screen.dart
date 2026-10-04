@@ -130,7 +130,7 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
             Container(
               height: 40,
               decoration: const BoxDecoration(
-                border: Border(bottom: BorderSide(color: kWhite, width: 1)),
+                border: Border(bottom: BorderSide(color: kFg, width: 1)),
               ),
               child: ListView(
                 scrollDirection: Axis.horizontal,
@@ -155,8 +155,8 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
                         ? const XbEmpty(message: 'No active campaigns match your filters.')
                         : RefreshIndicator(
                             onRefresh: _loadAndCheckin,
-                            color: kWhite,
-                            backgroundColor: kBlack,
+                            color: kFg,
+                            backgroundColor: kBg,
                             child: ListView.builder(
                               padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
                               itemCount: _campaigns.length,
@@ -182,14 +182,14 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
         margin: const EdgeInsets.only(right: 8, top: 6, bottom: 6),
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: selected ? kWhite : kBlack,
-          border: Border.all(color: kWhite, width: 1),
+          color: selected ? kFg : kBg,
+          border: Border.all(color: kFg, width: 1),
         ),
         child: Center(
           child: Text(
             label.toUpperCase(),
             style: TextStyle(
-              color: selected ? kBlack : kWhite,
+              color: selected ? kBg : kFg,
               fontSize: 9,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
@@ -223,15 +223,15 @@ class _OnboardingBanner extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: kWhite,
+      color: kFg,
       child: Row(children: [
-        const Icon(Icons.info_outline, color: kBlack, size: 16),
+        const Icon(Icons.info_outline, color: kBg, size: 16),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
             message,
             style: const TextStyle(
-              color: kBlack,
+              color: kBg,
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,

@@ -83,8 +83,8 @@ class _State extends ConsumerState<MerchantDashboardScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: _load,
-        color: kWhite,
-        backgroundColor: kBlack,
+        color: kFg,
+        backgroundColor: kBg,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
@@ -137,7 +137,7 @@ class _State extends ConsumerState<MerchantDashboardScreen> {
                 )),
               ]),
               const SizedBox(height: 32),
-              Container(height: 1, color: kWhite),
+              Container(height: 1, color: kFg),
               // Quick actions
               const XbSectionHeader(title: 'QUICK ACTIONS'),
               _ActionButton(
@@ -179,17 +179,17 @@ class _VerificationBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: ok ? kWhite : kBlack,
-        border: Border.all(color: kWhite, width: 1),
+        color: ok ? kFg : kBg,
+        border: Border.all(color: kFg, width: 1),
       ),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         Icon(ok ? Icons.verified_outlined : Icons.hourglass_empty,
-            size: 12, color: ok ? kBlack : kWhite),
+            size: 12, color: ok ? kBg : kFg),
         const SizedBox(width: 6),
         Text(
           label,
           style: TextStyle(
-            color: ok ? kBlack : kWhite,
+            color: ok ? kBg : kFg,
             fontSize: 9,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.5,
@@ -210,19 +210,19 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Material(
-        color: inverted ? kWhite : kBlack,
+        color: inverted ? kFg : kBg,
         child: InkWell(
           onTap: onTap,
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
             decoration: BoxDecoration(
-                border: Border.all(color: kWhite, width: 1),
-                color: inverted ? kWhite : kBlack),
+                border: Border.all(color: kFg, width: 1),
+                color: inverted ? kFg : kBg),
             child: Text(
               label,
               style: TextStyle(
-                color: inverted ? kBlack : kWhite,
+                color: inverted ? kBg : kFg,
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 2,

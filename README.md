@@ -119,7 +119,7 @@ lib/
 │   ├── router.dart           All routes + login redirect rules (go_router)
 │   ├── dio_client.dart       HTTP client, API base URL, automatic token refresh on 401
 │   ├── secure_storage.dart   Stores tokens/role/user id securely on the device
-│   └── theme.dart            Black and white dark theme
+│   └── theme.dart            Black and white light theme (white background, black text and borders)
 ├── data/                     One repository per API area (campaigns, proposals, escrow, ratings, ...)
 ├── features/                 One folder per area of the app, each holding its screens
 │   ├── auth/                 Login, creator/merchant registration, auth state

@@ -76,8 +76,8 @@ class _State extends ConsumerState<MerchantCampaignsScreen> {
                     )
                   : RefreshIndicator(
                       onRefresh: _load,
-                      color: kWhite,
-                      backgroundColor: kBlack,
+                      color: kFg,
+                      backgroundColor: kBg,
                       child: ListView.builder(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
                         itemCount: _campaigns.length,
@@ -89,7 +89,7 @@ class _State extends ConsumerState<MerchantCampaignsScreen> {
                               '0';
                           final status = c['status'] as String? ?? '';
                           return Material(
-                            color: kBlack,
+                            color: kBg,
                             child: InkWell(
                               onTap: () => context.push(
                                   '/merchant/campaigns/${c['id']}/bids'),
@@ -98,7 +98,7 @@ class _State extends ConsumerState<MerchantCampaignsScreen> {
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: kWhite, width: 1)),
+                                        color: kFg, width: 1)),
                                 child: Column(
                                   crossAxisAlignment:
                                       CrossAxisAlignment.start,

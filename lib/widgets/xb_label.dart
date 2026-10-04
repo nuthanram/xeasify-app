@@ -12,6 +12,6 @@ class XbLabel extends StatelessWidget {
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 2,
-            color: kWhite),
+            color: kFg),
       );
 }

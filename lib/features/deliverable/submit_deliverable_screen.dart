@@ -72,15 +72,15 @@ class _State extends ConsumerState<SubmitDeliverableScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                    color: kWhite,
-                    border: Border.all(color: kWhite, width: 1)),
+                    color: kFg,
+                    border: Border.all(color: kFg, width: 1)),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
                         'DELIVERABLE SUBMITTED',
                         style: TextStyle(
-                            color: kBlack,
+                            color: kBg,
                             fontSize: 14,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1),
@@ -89,7 +89,7 @@ class _State extends ConsumerState<SubmitDeliverableScreen> {
                       const Text(
                         'Awaiting verification',
                         style: TextStyle(
-                            color: kBlack, fontSize: 12, fontStyle: FontStyle.italic),
+                            color: kBg, fontSize: 12, fontStyle: FontStyle.italic),
                       ),
                     ]),
               ),
@@ -97,7 +97,7 @@ class _State extends ConsumerState<SubmitDeliverableScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                    border: Border.all(color: kWhite, width: 1)),
+                    border: Border.all(color: kFg, width: 1)),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -157,7 +157,7 @@ class _State extends ConsumerState<SubmitDeliverableScreen> {
               style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
             ),
             const SizedBox(height: 32),
-            Container(height: 1, color: kWhite),
+            Container(height: 1, color: kFg),
             const SizedBox(height: 24),
             // Ledger ID
             const Text('ESCROW LEDGER ID',
@@ -192,7 +192,7 @@ class _State extends ConsumerState<SubmitDeliverableScreen> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                  border: Border.all(color: kWhite, width: 1)),
+                  border: Border.all(color: kFg, width: 1)),
               child: const Text(
                 'Your content must be live and publicly accessible. The merchant has 48 hours to verify.',
                 style: TextStyle(fontSize: 11, height: 1.6),
@@ -210,7 +210,7 @@ class _State extends ConsumerState<SubmitDeliverableScreen> {
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: kBlack))
+                          strokeWidth: 2, color: kBg))
                   : const Text('SUBMIT DELIVERABLE'),
             ),
           ],

@@ -167,8 +167,8 @@ class _AppTourScreenState extends State<AppTourScreen> {
                           width: i == _index ? 20 : 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: i == _index ? kWhite : kBlack,
-                            border: Border.all(color: kWhite, width: 1),
+                            color: i == _index ? kFg : kBg,
+                            border: Border.all(color: kFg, width: 1),
                           ),
                         ),
                     ],
@@ -206,8 +206,8 @@ class _SlideView extends StatelessWidget {
             width: 88,
             height: 88,
             decoration:
-                BoxDecoration(border: Border.all(color: kWhite, width: 1)),
-            child: Icon(slide.icon, size: 40, color: kWhite),
+                BoxDecoration(border: Border.all(color: kFg, width: 1)),
+            child: Icon(slide.icon, size: 40, color: kFg),
           ),
           const SizedBox(height: 32),
           Text(
@@ -227,7 +227,7 @@ class _SlideView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration:
-                  BoxDecoration(border: Border.all(color: kWhite, width: 1)),
+                  BoxDecoration(border: Border.all(color: kFg, width: 1)),
               child: Text(slide.note!,
                   style: const TextStyle(fontSize: 12, height: 1.5)),
             ),

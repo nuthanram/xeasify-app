@@ -2,44 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-const Color kBlack = Color(0xFF000000);
-const Color kWhite = Color(0xFFFFFFFF);
+// Light, high-contrast theme: kBg is the page background (and the text colour on
+// filled controls), kFg is text, borders and filled controls.
+const Color kBg = Color(0xFFFFFFFF);
+const Color kFg = Color(0xFF000000);
 
 ThemeData xeasifyTheme() {
   return ThemeData(
     useMaterial3: true,
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: kBlack,
-    canvasColor: kBlack,
-    cardColor: kBlack,
-    colorScheme: const ColorScheme.dark(
-      primary: kWhite,
-      onPrimary: kBlack,
-      secondary: kWhite,
-      onSecondary: kBlack,
-      surface: kBlack,
-      onSurface: kWhite,
-      error: kWhite,
-      onError: kBlack,
-      outline: kWhite,
+    brightness: Brightness.light,
+    scaffoldBackgroundColor: kBg,
+    canvasColor: kBg,
+    cardColor: kBg,
+    colorScheme: const ColorScheme.light(
+      primary: kFg,
+      onPrimary: kBg,
+      secondary: kFg,
+      onSecondary: kBg,
+      surface: kBg,
+      onSurface: kFg,
+      error: kFg,
+      onError: kBg,
+      outline: kFg,
     ),
     appBarTheme: AppBarTheme(
-      backgroundColor: kBlack,
-      foregroundColor: kWhite,
+      backgroundColor: kBg,
+      foregroundColor: kFg,
       elevation: 0,
       scrolledUnderElevation: 0,
-      systemOverlayStyle: SystemUiOverlayStyle.light,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
       titleTextStyle: GoogleFonts.jetBrainsMono(
-          color: kWhite,
+          color: kFg,
           fontSize: 12,
           fontWeight: FontWeight.w700,
           letterSpacing: 2.5),
-      iconTheme: const IconThemeData(color: kWhite, size: 20),
+      iconTheme: const IconThemeData(color: kFg, size: 20),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: kWhite,
-        foregroundColor: kBlack,
+        backgroundColor: kFg,
+        foregroundColor: kBg,
         textStyle: GoogleFonts.jetBrainsMono(
             fontWeight: FontWeight.w700, fontSize: 12, letterSpacing: 2),
         shape: const RoundedRectangleBorder(),
@@ -49,8 +51,8 @@ ThemeData xeasifyTheme() {
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: kWhite,
-        side: const BorderSide(color: kWhite, width: 1),
+        foregroundColor: kFg,
+        side: const BorderSide(color: kFg, width: 1),
         textStyle: GoogleFonts.jetBrainsMono(
             fontWeight: FontWeight.w600, fontSize: 12, letterSpacing: 2),
         shape: const RoundedRectangleBorder(),
@@ -59,7 +61,7 @@ ThemeData xeasifyTheme() {
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: kWhite,
+        foregroundColor: kFg,
         textStyle: GoogleFonts.jetBrainsMono(
             fontWeight: FontWeight.w600, fontSize: 12, letterSpacing: 1),
         shape: const RoundedRectangleBorder(),
@@ -69,52 +71,52 @@ ThemeData xeasifyTheme() {
       filled: false,
       border: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: kWhite, width: 1)),
+          borderSide: BorderSide(color: kFg, width: 1)),
       enabledBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: kWhite, width: 1)),
+          borderSide: BorderSide(color: kFg, width: 1)),
       focusedBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: kWhite, width: 2)),
+          borderSide: BorderSide(color: kFg, width: 2)),
       errorBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: kWhite, width: 1)),
+          borderSide: BorderSide(color: kFg, width: 1)),
       focusedErrorBorder: const OutlineInputBorder(
           borderRadius: BorderRadius.zero,
-          borderSide: BorderSide(color: kWhite, width: 2)),
+          borderSide: BorderSide(color: kFg, width: 2)),
       labelStyle: GoogleFonts.jetBrainsMono(
-          color: kWhite, fontSize: 11, letterSpacing: 1.5),
+          color: kFg, fontSize: 11, letterSpacing: 1.5),
       hintStyle: GoogleFonts.jetBrainsMono(
-          color: kWhite, fontSize: 13, fontStyle: FontStyle.italic),
+          color: kFg, fontSize: 13, fontStyle: FontStyle.italic),
       contentPadding:
           const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       floatingLabelStyle: GoogleFonts.jetBrainsMono(
-          color: kWhite, fontSize: 10, letterSpacing: 1.5),
-      errorStyle: GoogleFonts.jetBrainsMono(color: kWhite, fontSize: 11),
+          color: kFg, fontSize: 10, letterSpacing: 1.5),
+      errorStyle: GoogleFonts.jetBrainsMono(color: kFg, fontSize: 11),
     ),
-    dividerColor: kWhite,
+    dividerColor: kFg,
     dividerTheme:
-        const DividerThemeData(color: kWhite, thickness: 1, space: 1),
+        const DividerThemeData(color: kFg, thickness: 1, space: 1),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? kBlack : kWhite),
+          (s) => s.contains(WidgetState.selected) ? kBg : kFg),
       trackColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? kWhite : kBlack),
-      trackOutlineColor: WidgetStateProperty.all(kWhite),
+          (s) => s.contains(WidgetState.selected) ? kFg : kBg),
+      trackOutlineColor: WidgetStateProperty.all(kFg),
     ),
     checkboxTheme: CheckboxThemeData(
       fillColor: WidgetStateProperty.resolveWith(
-          (s) => s.contains(WidgetState.selected) ? kWhite : kBlack),
-      checkColor: WidgetStateProperty.all(kBlack),
-      side: const BorderSide(color: kWhite, width: 1.5),
+          (s) => s.contains(WidgetState.selected) ? kFg : kBg),
+      checkColor: WidgetStateProperty.all(kBg),
+      side: const BorderSide(color: kFg, width: 1.5),
       shape: const RoundedRectangleBorder(),
     ),
     progressIndicatorTheme:
-        const ProgressIndicatorThemeData(color: kWhite),
+        const ProgressIndicatorThemeData(color: kFg),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: kBlack,
-      selectedItemColor: kWhite,
-      unselectedItemColor: kWhite,
+      backgroundColor: kBg,
+      selectedItemColor: kFg,
+      unselectedItemColor: kFg,
       type: BottomNavigationBarType.fixed,
       elevation: 0,
       showSelectedLabels: true,
@@ -124,13 +126,13 @@ ThemeData xeasifyTheme() {
       unselectedLabelStyle: TextStyle(fontSize: 9, letterSpacing: 1),
     ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: kWhite,
+      backgroundColor: kFg,
       contentTextStyle:
-          GoogleFonts.jetBrainsMono(color: kBlack, fontSize: 12),
+          GoogleFonts.jetBrainsMono(color: kBg, fontSize: 12),
       shape: const RoundedRectangleBorder(),
       behavior: SnackBarBehavior.floating,
     ),
-    textTheme: GoogleFonts.jetBrainsMonoTextTheme(ThemeData.dark().textTheme)
-        .apply(bodyColor: kWhite, displayColor: kWhite),
+    textTheme: GoogleFonts.jetBrainsMonoTextTheme(ThemeData.light().textTheme)
+        .apply(bodyColor: kFg, displayColor: kFg),
   );
 }

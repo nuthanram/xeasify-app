@@ -8,11 +8,11 @@ class TrueDataBadge extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-            color: kWhite, border: Border.all(color: kWhite, width: 1)),
+            color: kFg, border: Border.all(color: kFg, width: 1)),
         child: const Text(
           '✦ TRUE DATA',
           style: TextStyle(
-              color: kBlack,
+              color: kBg,
               fontSize: 9,
               fontWeight: FontWeight.w900,
               letterSpacing: 2),

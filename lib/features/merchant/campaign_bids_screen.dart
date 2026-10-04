@@ -102,11 +102,11 @@ class _State extends ConsumerState<CampaignBidsScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: kBlack,
+        backgroundColor: kBg,
         shape: const RoundedRectangleBorder(),
         title: const Text('COUNTER OFFER',
             style: TextStyle(
-                color: kWhite,
+                color: kFg,
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2)),
@@ -114,31 +114,31 @@ class _State extends ConsumerState<CampaignBidsScreen> {
           TextField(
             controller: bodyCtrl,
             maxLines: 3,
-            style: const TextStyle(color: kWhite, fontSize: 13),
+            style: const TextStyle(color: kFg, fontSize: 13),
             decoration: const InputDecoration(
               hintText: 'Message to creator...',
               enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.zero,
-                  borderSide: BorderSide(color: kWhite, width: 1)),
+                  borderSide: BorderSide(color: kFg, width: 1)),
               focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.zero,
-                  borderSide: BorderSide(color: kWhite, width: 2)),
+                  borderSide: BorderSide(color: kFg, width: 2)),
             ),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: priceCtrl,
             keyboardType: TextInputType.number,
-            style: const TextStyle(color: kWhite, fontSize: 13),
+            style: const TextStyle(color: kFg, fontSize: 13),
             decoration: const InputDecoration(
               hintText: 'Counter price (₹) — optional',
               prefixText: '₹ ',
               enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.zero,
-                  borderSide: BorderSide(color: kWhite, width: 1)),
+                  borderSide: BorderSide(color: kFg, width: 1)),
               focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.zero,
-                  borderSide: BorderSide(color: kWhite, width: 2)),
+                  borderSide: BorderSide(color: kFg, width: 2)),
             ),
           ),
         ]),
@@ -146,7 +146,7 @@ class _State extends ConsumerState<CampaignBidsScreen> {
           TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
               child: const Text('CANCEL',
-                  style: TextStyle(color: kWhite, fontSize: 11))),
+                  style: TextStyle(color: kFg, fontSize: 11))),
           ElevatedButton(
             onPressed: () async {
               Navigator.of(ctx).pop();
@@ -191,8 +191,8 @@ class _State extends ConsumerState<CampaignBidsScreen> {
                   child: XbError(message: _error!))
               : RefreshIndicator(
                   onRefresh: _load,
-                  color: kWhite,
-                  backgroundColor: kBlack,
+                  color: kFg,
+                  backgroundColor: kBg,
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
@@ -254,8 +254,8 @@ class _State extends ConsumerState<CampaignBidsScreen> {
                               margin: const EdgeInsets.only(bottom: 1),
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: isTop ? kWhite : kBlack,
-                                border: Border.all(color: kWhite, width: 1),
+                                color: isTop ? kFg : kBg,
+                                border: Border.all(color: kFg, width: 1),
                               ),
                               child: Column(
                                   crossAxisAlignment:
@@ -266,11 +266,11 @@ class _State extends ConsumerState<CampaignBidsScreen> {
                                         Container(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 6, vertical: 2),
-                                          color: kBlack,
+                                          color: kBg,
                                           child: const Text(
                                             '#1 RECOMMENDED',
                                             style: TextStyle(
-                                                color: kWhite,
+                                                color: kFg,
                                                 fontSize: 8,
                                                 fontWeight: FontWeight.w900,
                                                 letterSpacing: 1.5),
@@ -288,7 +288,7 @@ class _State extends ConsumerState<CampaignBidsScreen> {
                                       Text(
                                         'ROI ${roi}x',
                                         style: TextStyle(
-                                            color: isTop ? kBlack : kWhite,
+                                            color: isTop ? kBg : kFg,
                                             fontSize: 16,
                                             fontWeight: FontWeight.w900),
                                       ),
@@ -297,7 +297,7 @@ class _State extends ConsumerState<CampaignBidsScreen> {
                                     Text(
                                       row['creator_name'] as String? ?? '',
                                       style: TextStyle(
-                                          color: isTop ? kBlack : kWhite,
+                                          color: isTop ? kBg : kFg,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w800),
                                     ),
@@ -317,9 +317,9 @@ class _State extends ConsumerState<CampaignBidsScreen> {
                                           onPressed: () =>
                                               _showCounterDialog(proposalId),
                                           style: OutlinedButton.styleFrom(
-                                            foregroundColor: isTop ? kBlack : kWhite,
+                                            foregroundColor: isTop ? kBg : kFg,
                                             side: BorderSide(
-                                                color: isTop ? kBlack : kWhite,
+                                                color: isTop ? kBg : kFg,
                                                 width: 1),
                                             minimumSize: const Size(0, 40),
                                           ),
@@ -332,12 +332,12 @@ class _State extends ConsumerState<CampaignBidsScreen> {
                                           onPressed: () => _accept(proposalId),
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                isTop ? kBlack : kWhite,
+                                                isTop ? kBg : kFg,
                                             foregroundColor:
-                                                isTop ? kWhite : kBlack,
+                                                isTop ? kFg : kBg,
                                             minimumSize: const Size(0, 40),
                                             side: BorderSide(
-                                                color: isTop ? kWhite : kBlack,
+                                                color: isTop ? kFg : kBg,
                                                 width: 1),
                                           ),
                                           child: const Text('ACCEPT'),
@@ -367,13 +367,13 @@ class _Metric extends StatelessWidget {
         children: [
           Text(label,
               style: TextStyle(
-                  color: inverted ? kBlack : kWhite,
+                  color: inverted ? kBg : kFg,
                   fontSize: 8,
                   letterSpacing: 1.5)),
           const SizedBox(height: 2),
           Text(value,
               style: TextStyle(
-                  color: inverted ? kBlack : kWhite,
+                  color: inverted ? kBg : kFg,
                   fontSize: 14,
                   fontWeight: FontWeight.w800)),
         ],

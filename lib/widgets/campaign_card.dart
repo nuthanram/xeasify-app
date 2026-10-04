@@ -20,7 +20,7 @@ class CampaignCard extends StatelessWidget {
     final status = campaign['status'] as String? ?? '';
 
     return Material(
-      color: kBlack,
+      color: kBg,
       child: InkWell(
         onTap: () {
           HapticFeedback.lightImpact();
@@ -29,7 +29,7 @@ class CampaignCard extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.only(bottom: 1),
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(border: Border.all(color: kWhite, width: 1)),
+          decoration: BoxDecoration(border: Border.all(color: kFg, width: 1)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

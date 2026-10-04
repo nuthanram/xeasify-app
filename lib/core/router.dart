@@ -32,7 +32,7 @@ class _CreatorShell extends StatelessWidget {
       body: shell,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-            border: Border(top: BorderSide(color: kWhite, width: 1))),
+            border: Border(top: BorderSide(color: kFg, width: 1))),
         child: BottomNavigationBar(
           currentIndex: shell.currentIndex,
           onTap: (i) =>
@@ -71,7 +71,7 @@ class _MerchantShell extends StatelessWidget {
       body: shell,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-            border: Border(top: BorderSide(color: kWhite, width: 1))),
+            border: Border(top: BorderSide(color: kFg, width: 1))),
         child: BottomNavigationBar(
           currentIndex: shell.currentIndex,
           onTap: (i) =>

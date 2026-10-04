@@ -116,7 +116,7 @@ class _State extends ConsumerState<ProposalSubmitScreen> {
                 hintText:
                     'Describe your content plan and why you are the right fit...',
                 counterStyle:
-                    TextStyle(color: kWhite, fontSize: 10, letterSpacing: 1),
+                    TextStyle(color: kFg, fontSize: 10, letterSpacing: 1),
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -158,7 +158,7 @@ class _State extends ConsumerState<ProposalSubmitScreen> {
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: kBlack))
+                          strokeWidth: 2, color: kBg))
                   : const Text('SUBMIT PROPOSAL'),
             ),
           ],

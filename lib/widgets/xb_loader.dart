@@ -9,7 +9,7 @@ class XbLoader extends StatelessWidget {
         child: SizedBox(
           width: 24,
           height: 24,
-          child: CircularProgressIndicator(color: kWhite, strokeWidth: 1.5),
+          child: CircularProgressIndicator(color: kFg, strokeWidth: 1.5),
         ),
       );
 }

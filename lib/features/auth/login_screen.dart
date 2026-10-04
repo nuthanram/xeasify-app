@@ -80,13 +80,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 const SizedBox(height: 32),
                 // Divider
-                Container(height: 1, color: kWhite),
+                Container(height: 1, color: kFg),
                 const SizedBox(height: 40),
                 // Fields
                 TextFormField(
                   controller: _emailCtrl,
                   keyboardType: TextInputType.emailAddress,
-                  style: const TextStyle(color: kWhite, fontSize: 14),
+                  style: const TextStyle(color: kFg, fontSize: 14),
                   decoration: const InputDecoration(labelText: 'EMAIL'),
                   validator: (v) =>
                       (v == null || !v.contains('@'))
@@ -97,7 +97,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 TextFormField(
                   controller: _passwordCtrl,
                   obscureText: !_showPassword,
-                  style: const TextStyle(color: kWhite, fontSize: 14),
+                  style: const TextStyle(color: kFg, fontSize: 14),
                   decoration: InputDecoration(
                     labelText: 'PASSWORD',
                     suffixIcon: GestureDetector(
@@ -107,7 +107,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         _showPassword
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: kWhite,
+                        color: kFg,
                         size: 18,
                       ),
                     ),
@@ -120,7 +120,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration:
-                        BoxDecoration(border: Border.all(color: kWhite, width: 1)),
+                        BoxDecoration(border: Border.all(color: kFg, width: 1)),
                     child: Text(
                       '⚠ $_error',
                       style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
@@ -135,12 +135,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: kBlack))
+                              strokeWidth: 2, color: kBg))
                       : const Text('SIGN IN'),
                 ),
                 const SizedBox(height: 40),
                 // Register links
-                Container(height: 1, color: kWhite),
+                Container(height: 1, color: kFg),
                 const SizedBox(height: 24),
                 const Text(
                   'NEW HERE?',

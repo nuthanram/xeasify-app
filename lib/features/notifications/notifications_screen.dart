@@ -81,8 +81,8 @@ class _State extends ConsumerState<NotificationsScreen> {
                   ? const XbEmpty(message: 'No notifications yet.')
                   : RefreshIndicator(
                       onRefresh: _load,
-                      color: kWhite,
-                      backgroundColor: kBlack,
+                      color: kFg,
+                      backgroundColor: kBg,
                       child: ListView.builder(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
                         itemCount: _notifs.length,
@@ -93,12 +93,12 @@ class _State extends ConsumerState<NotificationsScreen> {
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                                 border:
-                                    Border.all(color: kWhite, width: 1)),
+                                    Border.all(color: kFg, width: 1)),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Icon(_iconFor(n.notificationType),
-                                    color: kWhite, size: 18),
+                                    color: kFg, size: 18),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(

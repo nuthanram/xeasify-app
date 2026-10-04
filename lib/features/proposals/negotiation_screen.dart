@@ -126,9 +126,9 @@ class _State extends ConsumerState<NegotiationScreen> {
                                 constraints:
                                     const BoxConstraints(maxWidth: 290),
                                 decoration: BoxDecoration(
-                                  color: isCreator ? kWhite : kBlack,
+                                  color: isCreator ? kFg : kBg,
                                   border:
-                                      Border.all(color: kWhite, width: 1),
+                                      Border.all(color: kFg, width: 1),
                                 ),
                                 child: Column(
                                   crossAxisAlignment:
@@ -137,7 +137,7 @@ class _State extends ConsumerState<NegotiationScreen> {
                                     Text(
                                       isCreator ? 'YOU' : 'MERCHANT',
                                       style: TextStyle(
-                                          color: isCreator ? kBlack : kWhite,
+                                          color: isCreator ? kBg : kFg,
                                           fontSize: 9,
                                           fontWeight: FontWeight.w700,
                                           letterSpacing: 2),
@@ -146,7 +146,7 @@ class _State extends ConsumerState<NegotiationScreen> {
                                     Text(
                                       m['body'] as String? ?? '',
                                       style: TextStyle(
-                                          color: isCreator ? kBlack : kWhite,
+                                          color: isCreator ? kBg : kFg,
                                           fontSize: 13,
                                           height: 1.5),
                                     ),
@@ -156,8 +156,8 @@ class _State extends ConsumerState<NegotiationScreen> {
                                         'COUNTER: ₹${m['counter_price']}',
                                         style: TextStyle(
                                             color: isCreator
-                                                ? kBlack
-                                                : kWhite,
+                                                ? kBg
+                                                : kFg,
                                             fontSize: 10,
                                             fontWeight: FontWeight.w800,
                                             letterSpacing: 1),
@@ -171,8 +171,8 @@ class _State extends ConsumerState<NegotiationScreen> {
                                             m['sent_at'] as String?),
                                         style: TextStyle(
                                             color: isCreator
-                                                ? kBlack
-                                                : kWhite,
+                                                ? kBg
+                                                : kFg,
                                             fontSize: 9),
                                       ),
                                     ),
@@ -187,7 +187,7 @@ class _State extends ConsumerState<NegotiationScreen> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
                   decoration: const BoxDecoration(
-                    border: Border(top: BorderSide(color: kWhite, width: 1)),
+                    border: Border(top: BorderSide(color: kFg, width: 1)),
                   ),
                   child: Column(children: [
                     TextField(
@@ -216,7 +216,7 @@ class _State extends ConsumerState<NegotiationScreen> {
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: kBlack))
+                                  strokeWidth: 2, color: kBg))
                           : const Text('SEND'),
                     ),
                   ]),
