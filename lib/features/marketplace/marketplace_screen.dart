@@ -28,6 +28,38 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
   void initState() {
     super.initState();
     _loadAndCheckin();
+    _askLocationOnce();
+  }
+
+  /// Explains why location is useful, then asks once. Declining is fine —
+  /// the app works without it and we never ask again.
+  Future<void> _askLocationOnce() async {
+    if (!await LocationService.needsPrompt() || !mounted) return;
+    await LocationService.markPrompted();
+    if (!mounted) return;
+    final accepted = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Enable location?'),
+        content: const Text(
+          'Sharing your location lets us match you with nearby flash campaigns. '
+          'It is optional — you can use Xeasify without it.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Not now'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Allow'),
+          ),
+        ],
+      ),
+    );
+    if (accepted == true && await LocationService.requestPermission()) {
+      LocationService.checkInIfPermitted();
+    }
   }
 
   Future<void> _loadAndCheckin() async {
