@@ -2,6 +2,10 @@
 
 Newest entries first. Read this file before every change and add an entry with every change (see `.claude/skills/xeasify-main-only/SKILL.md`).
 
+## 2026-10-04 — Add first-run app tour for creators and merchants
+- What changed: new `lib/features/onboarding/app_tour_screen.dart` (4 role-specific slides, SKIP / NEXT / GET STARTED), `lib/services/tour_service.dart` (per-role "seen" flag in `shared_preferences`), a `/tour/:role` route in `lib/core/router.dart`, auto-open on first visit to the marketplace and merchant dashboard, and a `?` replay icon in both app bars. On the marketplace the location dialog now waits until the tour closes. Added `test/app_tour_test.dart` (6 passing tests) and updated `README.md`.
+- Why: new users did not know the creator verification steps, bidding/negotiation, or how escrow pays out. The tour is shown once per role, is skippable, and can be replayed.
+
 ## 2026-10-04 — Write full README
 - What changed: replaced the placeholder `README.md` with setup, backend/`API_BASE_URL` configuration, run/build commands, project layout, app flow, permissions, a step-by-step testing guide, contribution rules and known issues.
 - Why: new contributors had no instructions for running or testing the app. Known issues documented rather than fixed: broken template `test/widget_test.dart`, Firebase never initialised, no logout UI, CI/toolchain version mismatch.

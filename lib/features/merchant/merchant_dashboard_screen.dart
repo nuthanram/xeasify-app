@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import '../../data/accounts_repository.dart';
 import '../../data/campaigns_repository.dart';
+import '../../services/tour_service.dart';
 import '../../widgets/xb_metric_tile.dart';
 import '../../widgets/xb_section_header.dart';
 import '../../widgets/xb_loader.dart';
@@ -26,6 +27,9 @@ class _State extends ConsumerState<MerchantDashboardScreen> {
   void initState() {
     super.initState();
     _load();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) TourService.showIfFirstTime(context, 'merchant');
+    });
   }
 
   Future<void> _load() async {
@@ -66,6 +70,11 @@ class _State extends ConsumerState<MerchantDashboardScreen> {
       appBar: AppBar(
         title: const Text('COMMAND CENTER'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline, size: 20),
+            tooltip: 'How it works',
+            onPressed: () => context.push('/tour/merchant'),
+          ),
           IconButton(
             icon: const Icon(Icons.notifications_outlined, size: 20),
             onPressed: () => context.push('/merchant/notifications'),

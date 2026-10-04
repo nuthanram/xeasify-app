@@ -13,6 +13,8 @@ import '../features/proposals/negotiation_screen.dart';
 import '../features/deliverable/submit_deliverable_screen.dart';
 import '../features/pricing/pricing_screen.dart';
 import '../features/notifications/notifications_screen.dart';
+import '../features/onboarding/app_tour_screen.dart';
+import '../services/tour_service.dart';
 import '../features/merchant/merchant_dashboard_screen.dart';
 import '../features/merchant/create_campaign_screen.dart';
 import '../features/merchant/campaign_bids_screen.dart';
@@ -125,6 +127,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
           path: '/register/creator',
           builder: (_, __) => const RegisterCreatorScreen()),
+
+      // ── App tour (first run + replay from the help icon) ────────
+      GoRoute(
+          path: '/tour/:role',
+          builder: (_, s) => AppTourScreen(
+              role: TourService.normalizeRole(s.pathParameters['role']))),
 
       // ── Creator shell (persistent bottom nav) ───────────────────
       StatefulShellRoute.indexedStack(

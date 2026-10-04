@@ -8,6 +8,7 @@ import '../../widgets/xb_loader.dart';
 import '../../widgets/xb_empty.dart';
 import '../../widgets/xb_error.dart';
 import '../../services/location_service.dart';
+import '../../services/tour_service.dart';
 import '../auth/auth_provider.dart';
 
 class MarketplaceScreen extends ConsumerStatefulWidget {
@@ -28,7 +29,16 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
   void initState() {
     super.initState();
     _loadAndCheckin();
-    _askLocationOnce();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _runFirstOpenPrompts();
+    });
+  }
+
+  /// First open: app tour, then (only after it closes) the location explanation.
+  Future<void> _runFirstOpenPrompts() async {
+    await TourService.showIfFirstTime(context, ref.read(authProvider).role);
+    if (!mounted) return;
+    await _askLocationOnce();
   }
 
   /// Explains why location is useful, then asks once. Declining is fine —
@@ -100,6 +110,11 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
       appBar: AppBar(
         title: const Text('MARKETPLACE'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline, size: 20),
+            tooltip: 'How it works',
+            onPressed: () => context.push('/tour/creator'),
+          ),
           IconButton(
             icon: const Icon(Icons.notifications_outlined, size: 20),
             onPressed: () => context.push('/notifications'),

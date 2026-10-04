@@ -126,13 +126,15 @@ lib/
 │   ├── marketplace/          Campaign list and campaign detail (creator)
 │   ├── proposals/            My proposals, submit proposal, negotiation (creator)
 │   ├── deliverable/          Submit deliverable (creator)
+│   ├── onboarding/           First-run app tour (separate slides for creators and merchants)
 │   ├── pricing/              Pricing screen
 │   ├── merchant/             Dashboard, campaigns list, create campaign, bids (merchant)
 │   └── notifications/        Notification list
 ├── models/                   Data classes (campaign, proposal, notification)
 ├── services/
 │   ├── fcm_service.dart      Firebase push notifications (optional)
-│   └── location_service.dart GPS check-in and the one-time permission prompt (optional)
+│   ├── location_service.dart GPS check-in and the one-time permission prompt (optional)
+│   └── tour_service.dart     Remembers whether the app tour was seen (per role) and opens it
 └── widgets/                  Shared UI pieces (campaign card, status chip, loader, error, empty state, ...)
 
 android/                      Android project (permissions live in app/src/main/AndroidManifest.xml)
@@ -167,6 +169,8 @@ State management is **Riverpod**, navigation is **go_router**, and HTTP is **Dio
 
 **Creator onboarding.** Creators progress through `social_linked` → `metrics_granted` → `verified` (`signupState` in `lib/features/auth/auth_provider.dart`). Only `verified` creators can see campaigns, and the marketplace shows an onboarding banner until then. To test the marketplace you need a creator account that is already verified on the backend.
 
+**First-run app tour.** The first time a user opens their home screen (MARKET for creators, COMMAND CENTER for merchants) a short tour opens with 4 slides written for their role, with a SKIP button. It is shown once per role per install. The `?` icon in the top bar of both home screens replays it. On the marketplace the location explanation appears only after the tour is closed. Slide text lives in `lib/features/onboarding/app_tour_screen.dart`; update it when the flows change.
+
 **Navigation.**
 
 - Creators have three bottom tabs: **MARKET**, **BIDS**, **ALERTS**.
@@ -188,7 +192,7 @@ Android permissions are declared in `android/app/src/main/AndroidManifest.xml`. 
 
 **Firebase files are not in the repo.** `google-services.json`, `GoogleService-Info.plist` and `firebase_options.dart` are git-ignored because they are project secrets. You do not need them to develop. Ask the project owner if you must test push notifications.
 
-**Re-testing the location prompt.** The prompt only shows once per install. To see it again, uninstall the app or clear its storage (long-press the app icon → App info → Storage → Clear data), and make sure location permission is not already granted.
+**Re-testing the tour or the location prompt.** Both only show once per install. To see it again, uninstall the app or clear its storage (long-press the app icon → App info → Storage → Clear data), and make sure location permission is not already granted.
 
 ---
 
@@ -210,7 +214,7 @@ This must not report **new** errors or warnings caused by your change. Existing 
 flutter test
 ```
 
-> **Heads up:** the only test file, `test/widget_test.dart`, is Flutter's unmodified template and is currently broken (see [Known issues](#9-known-issues)). `flutter test` fails until it is fixed, so for now it does not tell you anything about your change. When you add tests, put them in `test/` and name files `*_test.dart`.
+> **Heads up:** `flutter test` currently reports one failure that is not yours: `test/widget_test.dart` is Flutter's unmodified template and does not compile (see [Known issues](#9-known-issues)). Run just the working tests with `flutter test test/app_tour_test.dart`. When you add tests, put them in `test/` and name files `*_test.dart`.
 
 ### Step 3: Try it on a device (manual test)
 
@@ -221,6 +225,8 @@ flutter test
 
 **Creator checklist**
 
+- [ ] First open shows the creator app tour (4 slides). SKIP and GET STARTED both close it, and it does not reappear. The `?` icon in the top bar replays it.
+- [ ] After the tour closes, the location explanation dialog appears (first install only).
 - [ ] Login lands on **MARKET** and the campaign list loads.
 - [ ] Category filters change the list.
 - [ ] Opening a campaign shows its detail; "apply" opens the proposal form.
@@ -230,6 +236,7 @@ flutter test
 
 **Merchant checklist**
 
+- [ ] First open shows the merchant app tour (4 slides) once. The `?` icon replays it.
 - [ ] Login lands on **COMMAND** (dashboard).
 - [ ] **CAMPAIGNS** lists campaigns; "new" opens the create-campaign form.
 - [ ] Opening a campaign's bids works.
@@ -273,7 +280,7 @@ These rules are enforced through the skills in `.claude/skills/` and apply to hu
 
 These are documented so you don't waste time on them:
 
-- **`flutter test` fails.** `test/widget_test.dart` is the default Flutter "counter" template. It references a `MyApp` class that does not exist in this app (the app class is `XeasifyApp`) and tests a counter that is not part of the app. It needs rewriting or deleting.
+- **`flutter test` fails.** `test/widget_test.dart` (the only broken file; `test/app_tour_test.dart` passes) is the default Flutter "counter" template. It references a `MyApp` class that does not exist in this app (the app class is `XeasifyApp`) and tests a counter that is not part of the app. It needs rewriting or deleting.
 - **Two `unnecessary_cast` analyzer warnings** in `lib/features/marketplace/marketplace_screen.dart` (existing, harmless).
 - **Push notifications probably never activate.** `FCMService` never calls `Firebase.initializeApp()`, and the Android Gradle files do not apply the Google Services plugin. The error is swallowed, so nothing visibly breaks, but no push token is registered. This needs fixing before push can work.
 - **CI and local toolchains differ.** CI pins Flutter `3.24.x`, while the Android project uses a newer toolchain (Android Gradle Plugin 9.0.1, Kotlin 2.3.20). If the CI build fails with a Gradle or Kotlin version error, update the version in `build.yml` first.
