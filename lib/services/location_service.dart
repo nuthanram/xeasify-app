@@ -1,9 +1,8 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../core/config.dart';
 import '../core/secure_storage.dart';
-
-const String kBaseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://10.0.2.2:8000');
 
 class LocationService {
   static Future<void> checkInIfPermitted() async {
@@ -44,7 +43,7 @@ class LocationService {
     final token = await SecureStorage.getAccessToken();
     if (token == null) return;
     try {
-      final dio = Dio(BaseOptions(baseUrl: '$kBaseUrl/api/v1'));
+      final dio = Dio(BaseOptions(baseUrl: kApiUrl));
       await dio.post(
         '/geo/checkin/',
         data: {'latitude': lat, 'longitude': lng},

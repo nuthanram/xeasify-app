@@ -5,6 +5,8 @@ import '../features/auth/auth_provider.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/register_merchant_screen.dart';
 import '../features/auth/register_creator_screen.dart';
+import '../features/auth/youtube_callback_screen.dart';
+import '../features/auth/youtube_web_sign_in.dart';
 import '../features/marketplace/marketplace_screen.dart';
 import '../features/marketplace/campaign_detail_screen.dart';
 import '../features/proposals/proposal_submit_screen.dart';
@@ -110,7 +112,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       final loc = state.matchedLocation;
       final isAuthRoute = loc == '/login' ||
           loc == '/register/merchant' ||
-          loc == '/register/creator';
+          loc == '/register/creator' ||
+          loc == YouTubeWebSignIn.callbackPath;
       if (!isLoggedIn && !isAuthRoute) return '/login';
       if (isLoggedIn && isAuthRoute) {
         return auth.role == 'merchant' ? '/merchant' : '/marketplace';
@@ -127,6 +130,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
           path: '/register/creator',
           builder: (_, __) => const RegisterCreatorScreen()),
+      // Web YouTube sign-in: Google redirects here with ?code=…&state=…
+      GoRoute(
+          path: YouTubeWebSignIn.callbackPath,
+          builder: (_, s) => YouTubeCallbackScreen(
+                code: s.uri.queryParameters['code'],
+                state: s.uri.queryParameters['state'],
+                error: s.uri.queryParameters['error'],
+              )),
 
       // ── App tour (first run + replay from the help icon) ────────
       GoRoute(

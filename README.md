@@ -74,6 +74,7 @@ The API address is set at build time with `--dart-define=API_BASE_URL=...`. The 
 | Android **emulator**, backend on your computer | `http://10.0.2.2:8000` (the default, no flag needed) | `10.0.2.2` is the emulator's alias for your computer's `localhost`. |
 | **Physical phone**, backend on your computer | `http://<your-computer-LAN-IP>:8000` | Phone and computer must be on the same Wi-Fi. Make sure the backend listens on `0.0.0.0`, not just `127.0.0.1`. |
 | A **deployed/staging** backend | `https://your-host` | Use whatever URL the backend owner gives you. |
+| **Chrome**, against the **dev** backend | `https://api.dev.xeasify.com` | Run `.\tool\run_web_dev.ps1` (see "Testing in Chrome against dev" below). |
 
 ```bash
 # Example: physical phone
@@ -92,6 +93,22 @@ Other calls live in `lib/data/*_repository.dart`. Find the backend repository wi
 
 If the app cannot reach the backend, screens show an error such as "Failed to load campaigns." Check that the backend is running and that `API_BASE_URL` is correct for your device before debugging the app.
 
+### Testing in Chrome against dev
+
+The dev backend runs at **https://api.dev.xeasify.com** (`xeasify-core`, deployed automatically from its `main`). From the repo root in PowerShell:
+
+```powershell
+.\tool\run_web_dev.ps1
+# = flutter run -d chrome --web-port 5000 --dart-define=API_BASE_URL=https://api.dev.xeasify.com
+```
+
+- **Keep port 5000.** The dev API accepts browser calls only from `http://localhost:<port>` / `http://127.0.0.1:<port>` (CORS), and YouTube sign-in redirects back to `http://localhost:5000/oauth/youtube`.
+- **Merchants** register with JOIN AS MERCHANT and sign in with email + password.
+- **Creators** sign in on the web with **CONTINUE WITH YOUTUBE** only (Google's redirect flow through the backend; Instagram, Facebook and TikTok still need their mobile SDKs). This needs, once, on the backend side: `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` of a Google OAuth **web** client in the dev env secret, and `http://localhost:5000/oauth/youtube` in that client's **Authorized redirect URIs** (Google Cloud console → APIs & Services → Credentials).
+- **Switching accounts:** there is no logout button yet. In Chrome: DevTools (F12) → Application → Storage → **Clear site data**, then reload.
+- **Debugging a failed call:** every API response carries an `X-Request-ID` header (DevTools → Network → the request → Headers). Look it up in the backend's Cloud Logging (see `xeasify-core/docker/GCP.md`, "Dev: logs in Cloud Logging").
+- Push notifications are off on the web (Firebase is mobile-only here); the location prompt is the browser's.
+
 ---
 
 ## 3. Running the app
@@ -100,6 +117,8 @@ If the app cannot reach the backend, screens show an error such as "Failed to lo
 |---|---|
 | Run in debug mode with hot reload | `flutter run` |
 | Run against a specific backend | `flutter run --dart-define=API_BASE_URL=http://HOST:PORT` |
+| Run in Chrome against dev | `.\tool\run_web_dev.ps1` |
+| Build the web app | `flutter build web --dart-define=API_BASE_URL=https://HOST` (output in `build/web`) |
 | Choose a device | `flutter devices`, then `flutter run -d <device-id>` |
 | Build a debug APK | `flutter build apk --debug --dart-define=API_BASE_URL=http://HOST:PORT` |
 | Find the APK | `build/app/outputs/flutter-apk/app-debug.apk` |
@@ -214,7 +233,7 @@ This must not report **new** errors or warnings caused by your change. Existing 
 flutter test
 ```
 
-> **Heads up:** `flutter test` currently reports one failure that is not yours: `test/widget_test.dart` is Flutter's unmodified template and does not compile (see [Known issues](#9-known-issues)). Run just the working tests with `flutter test test/app_tour_test.dart`. When you add tests, put them in `test/` and name files `*_test.dart`.
+All tests must pass. When you add tests, put them in `test/` and name files `*_test.dart`. `test/auth_test.dart` shows how to fake backend responses with a Dio `HttpClientAdapter`.
 
 ### Step 3: Try it on a device (manual test)
 
@@ -280,7 +299,8 @@ These rules are enforced through the skills in `.claude/skills/` and apply to hu
 
 These are documented so you don't waste time on them:
 
-- **`flutter test` fails.** `test/widget_test.dart` (the only broken file; `test/app_tour_test.dart` passes) is the default Flutter "counter" template. It references a `MyApp` class that does not exist in this app (the app class is `XeasifyApp`) and tests a counter that is not part of the app. It needs rewriting or deleting.
+- **Creator sign-in needs native SDKs on mobile.** Instagram, Facebook, TikTok and (on Android) YouTube buttons show "sign-in SDK not yet configured". On the web, YouTube works through the backend's Google redirect flow (section 2).
+- **Location check-in calls a removed endpoint.** `LocationService` still posts to `/geo/checkin/`, which the backend no longer has (it now uses a declared base, `/geo/base/`); the 404 is swallowed. The location prompt is therefore not needed until the base screen exists.
 - **Two `unnecessary_cast` analyzer warnings** in `lib/features/marketplace/marketplace_screen.dart` (existing, harmless).
 - **Push notifications probably never activate.** `FCMService` never calls `Firebase.initializeApp()`, and the Android Gradle files do not apply the Google Services plugin. The error is swallowed, so nothing visibly breaks, but no push token is registered. This needs fixing before push can work.
 - **CI and local toolchains differ.** CI pins Flutter `3.24.x`, while the Android project uses a newer toolchain (Android Gradle Plugin 9.0.1, Kotlin 2.3.20). If the CI build fails with a Gradle or Kotlin version error, update the version in `build.yml` first.

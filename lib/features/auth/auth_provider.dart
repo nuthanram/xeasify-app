@@ -53,23 +53,30 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> login(String email, String password) async {
-    final result = await _repo.login(email, password);
-    await SecureStorage.saveAccessToken(result['access']);
-    await SecureStorage.saveRefreshToken(result['refresh']);
-    await SecureStorage.saveRole(result['role']);
-    await SecureStorage.saveUserId(result['user_id']);
-    state = AuthState(
-      accessToken: result['access'],
-      role: result['role'],
-      userId: result['user_id'],
-    );
+    await _signIn(await _repo.login(email, password));
   }
 
   Future<void> socialLogin(String provider, String accessToken) async {
-    final result = await _repo.socialAuth(
+    await _signIn(await _repo.socialAuth(
       provider: provider,
       accessToken: accessToken,
-    );
+    ));
+  }
+
+  /// Web YouTube sign-in: finish the Google authorization-code redirect.
+  Future<void> youtubeCodeLogin({
+    required String code,
+    required String redirectUri,
+    required String state,
+  }) async {
+    await _signIn(await _repo.youtubeCodeLogin(
+      code: code,
+      redirectUri: redirectUri,
+      state: state,
+    ));
+  }
+
+  Future<void> _signIn(Map<String, dynamic> result) async {
     await SecureStorage.saveAccessToken(result['access']);
     await SecureStorage.saveRefreshToken(result['refresh']);
     await SecureStorage.saveRole(result['role']);

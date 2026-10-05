@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import 'auth_provider.dart';
+import 'youtube_web_sign_in.dart';
 
 // ── Platform descriptors ────────────────────────────────────────────────────
 class _Platform {
@@ -98,6 +101,19 @@ class _RegisterCreatorScreenState extends ConsumerState<RegisterCreatorScreen> {
         );
 
       case 'youtube':
+        if (kIsWeb) {
+          // Browser: redirect through Google's consent page; YouTubeCallbackScreen
+          // finishes the sign-in when Google sends the tab back.
+          try {
+            await YouTubeWebSignIn.start(ref.read(authRepositoryProvider));
+          } on DioException catch (e) {
+            final data = e.response?.data;
+            throw SocialAuthException(data is Map && data['error'] != null
+                ? 'YouTube sign-in unavailable: ${data['error']}'
+                : 'Could not reach the server to start YouTube sign-in.');
+          }
+          return null; // the page is navigating to Google
+        }
         // TODO: Add google_sign_in to pubspec.yaml, then:
         //   final googleUser = await GoogleSignIn(
         //     scopes: ['https://www.googleapis.com/auth/youtube.readonly'],

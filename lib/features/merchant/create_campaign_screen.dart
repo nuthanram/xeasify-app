@@ -104,6 +104,11 @@ class _State extends ConsumerState<CreateCampaignScreen> {
       setState(() => _error = 'Budget fields are required.');
       return;
     }
+    if (_selectedCategory == null) {
+      // The backend requires a category; without this the form only said "Failed to create".
+      setState(() => _error = 'Choose a category.');
+      return;
+    }
     setState(() {
       _loading = true;
       _error = null;

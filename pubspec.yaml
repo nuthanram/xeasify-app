@@ -9,6 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Path URLs on web (/oauth/youtube?code=… must reach the router, not a #fragment)
+  flutter_web_plugins:
+    sdk: flutter
 
   # State management
   flutter_riverpod: ^2.5.1
@@ -23,6 +26,8 @@ dependencies:
 
   # Navigation
   go_router: ^14.3.0
+  # Opens the Google consent page for web YouTube sign-in
+  url_launcher: ^6.3.1
 
   # Firebase
   firebase_core: ^3.6.0

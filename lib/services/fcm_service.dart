@@ -1,9 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:dio/dio.dart';
+import '../core/config.dart';
 import '../core/secure_storage.dart';
-
-const String kBaseUrl =
-    String.fromEnvironment('API_BASE_URL', defaultValue: 'http://10.0.2.2:8000');
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -48,7 +46,7 @@ class FCMService {
     final accessToken = await SecureStorage.getAccessToken();
     if (accessToken == null) return;
     try {
-      final dio = Dio(BaseOptions(baseUrl: '$kBaseUrl/api/v1'));
+      final dio = Dio(BaseOptions(baseUrl: kApiUrl));
       await dio.patch(
         '/accounts/creator/fcm-token/',
         data: {'fcm_token': token},

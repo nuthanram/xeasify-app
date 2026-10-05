@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'config.dart';
 import 'secure_storage.dart';
-
-const String kBaseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://10.0.2.2:8000');
 
 final dioProvider = Provider<Dio>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: '$kBaseUrl/api/v1',
+    baseUrl: kApiUrl,
     connectTimeout: const Duration(seconds: 15),
     receiveTimeout: const Duration(seconds: 30),
     headers: {'Content-Type': 'application/json'},
@@ -39,14 +38,18 @@ class AuthInterceptor extends Interceptor {
         final refresh = await SecureStorage.getRefreshToken();
         if (refresh == null) throw Exception('No refresh token');
 
-        final refreshDio = Dio(BaseOptions(baseUrl: '$kBaseUrl/api/v1'));
+        final refreshDio = Dio(BaseOptions(baseUrl: kApiUrl));
         final res = await refreshDio.post('/auth/token/refresh/', data: {'refresh': refresh});
         final newAccess = res.data['access'] as String;
 
         await SecureStorage.saveAccessToken(newAccess);
+        // The backend rotates refresh tokens and blacklists the old one, so the new
+        // refresh token must replace it — otherwise the next refresh fails and logs out.
+        final newRefresh = res.data['refresh'] as String?;
+        if (newRefresh != null) await SecureStorage.saveRefreshToken(newRefresh);
         err.requestOptions.headers['Authorization'] = 'Bearer $newAccess';
 
-        final retryDio = Dio(BaseOptions(baseUrl: '$kBaseUrl/api/v1'));
+        final retryDio = Dio(BaseOptions(baseUrl: kApiUrl));
         final retry = await retryDio.fetch(err.requestOptions);
         handler.resolve(retry);
       } catch (_) {
