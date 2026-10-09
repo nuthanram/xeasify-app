@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import 'auth_provider.dart';
+import 'meta_sign_in.dart';
 import 'youtube_web_sign_in.dart';
 
 // ── Platform descriptors ────────────────────────────────────────────────────
@@ -13,11 +14,9 @@ class _Platform {
   final String label;
   final String sublabel;
   final IconData icon;
-  // TODO: when adding native SDK packages, implement this per platform:
-  //   instagram → flutter_facebook_auth (instagram permissions)
-  //   facebook  → flutter_facebook_auth
-  //   youtube   → google_sign_in (youtube.readonly scope)
-  //   tiktok    → tiktok_flutter_auth or webview-based flow
+  // Sign-in per platform: instagram / facebook → MetaSignIn (flutter_facebook_auth);
+  // youtube → Google redirect flow on the web (native google_sign_in still TODO);
+  // tiktok → not wired yet (needs a backend code-exchange endpoint).
   const _Platform(this.id, this.label, this.sublabel, this.icon);
 }
 
@@ -84,21 +83,13 @@ class _RegisterCreatorScreenState extends ConsumerState<RegisterCreatorScreen> {
     switch (provider) {
       case 'instagram':
       case 'facebook':
-        // TODO: Add flutter_facebook_auth to pubspec.yaml, then:
-        //   final result = await FacebookAuth.instance.login(
-        //     permissions: provider == 'instagram'
-        //         ? ['instagram_basic', 'pages_show_list']
-        //         : ['public_profile', 'email'],
-        //   );
-        //   if (result.status == LoginStatus.cancelled) return null;
-        //   if (result.status != LoginStatus.success) {
-        //     throw SocialAuthException('Facebook sign-in failed: ${result.message}');
-        //   }
-        //   return result.accessToken!.token;
-        throw SocialAuthException(
-          '${provider[0].toUpperCase()}${provider.substring(1)} sign-in SDK not yet configured.\n'
-          'Add flutter_facebook_auth to pubspec.yaml.',
-        );
+        // Meta SDK: native Facebook Login on Android, Meta's JavaScript SDK on the web.
+        // Instagram = Facebook Login with the Instagram permissions.
+        try {
+          return await MetaSignIn.accessToken(provider);
+        } on MetaSignInException catch (e) {
+          throw SocialAuthException(e.message);
+        }
 
       case 'youtube':
         if (kIsWeb) {

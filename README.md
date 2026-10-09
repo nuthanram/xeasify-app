@@ -98,13 +98,21 @@ If the app cannot reach the backend, screens show an error such as "Failed to lo
 The dev backend runs at **https://api.dev.xeasify.com** (`xeasify-core`, deployed automatically from its `main`). From the repo root in PowerShell:
 
 ```powershell
+copy config\dev.example.json config\dev.json   # once; fill in the Meta values (see below)
 .\tool\run_web_dev.ps1
-# = flutter run -d chrome --web-port 5000 --dart-define=API_BASE_URL=https://api.dev.xeasify.com
+# = flutter run -d chrome --web-port 5000 --dart-define-from-file=config/dev.json
+#   (without config/dev.json: --dart-define=API_BASE_URL=https://api.dev.xeasify.com)
 ```
+
+On a Mac / Linux machine, or if PowerShell blocks scripts, run the `flutter run` line directly.
 
 - **Keep port 5000.** The dev API accepts browser calls only from `http://localhost:<port>` / `http://127.0.0.1:<port>` (CORS), and YouTube sign-in redirects back to `http://localhost:5000/oauth/youtube`.
 - **Merchants** register with JOIN AS MERCHANT and sign in with email + password.
-- **Creators** sign in on the web with **CONTINUE WITH YOUTUBE** only (Google's redirect flow through the backend; Instagram, Facebook and TikTok still need their mobile SDKs). This needs, once, on the backend side: `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` of a Google OAuth **web** client in the dev env secret, and `http://localhost:5000/oauth/youtube` in that client's **Authorized redirect URIs** (Google Cloud console → APIs & Services → Credentials).
+- **Creators** sign in with:
+  - **YouTube** (web): Google's redirect flow through the backend. Needs the Google OAuth web client keys in the dev env secret (done on dev) and `http://localhost:5000/oauth/youtube` in that client's **Authorized redirect URIs**; while the OAuth consent screen is in *Testing*, only Google accounts listed as test users can sign in.
+  - **Instagram / Facebook** (web and Android): Meta's SDK. Needs `FACEBOOK_APP_ID` and `FACEBOOK_CLIENT_TOKEN` in `config/dev.json` (Meta app → Settings → Basic; not committed: share them directly), your Facebook account added as a tester of the Meta app, and on Android the debug key hash registered with Meta. The backend needs the same app's `META_APP_ID` / `META_APP_SECRET`.
+  - TikTok is not wired yet.
+- **Another machine** can test the same way: it only needs this repo, Flutter and Chrome (no Google Cloud access). The dev VM is stopped between sessions, so check dev is up first; send `config/dev.json` values directly.
 - **Switching accounts:** there is no logout button yet. In Chrome: DevTools (F12) → Application → Storage → **Clear site data**, then reload.
 - **Debugging a failed call:** every API response carries an `X-Request-ID` header (DevTools → Network → the request → Headers). Look it up in the backend's Cloud Logging (see `xeasify-core/docker/GCP.md`, "Dev: logs in Cloud Logging").
 - Push notifications are off on the web (Firebase is mobile-only here); the location prompt is the browser's.

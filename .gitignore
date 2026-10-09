@@ -17,6 +17,9 @@ android/.kotlin/
 
 # Environment
 .env
+# Per-machine build config (Meta App ID / client token, API URL); template: config/dev.example.json
+config/*.json
+!config/*.example.json
 google-services.json
 GoogleService-Info.plist
 firebase_options.dart
