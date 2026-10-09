@@ -42,10 +42,24 @@ class AccountsRepository {
     return res.data as Map<String, dynamic>;
   }
 
-  /// Creator onboarding step 3 (email half): the backend emails a link that
-  /// confirms the address when opened; it is valid for 24 hours.
-  Future<void> startEmailVerification(String email) async {
-    await _dio.post('/accounts/creator/verify-email/initiate/', data: {'email': email});
+  /// Creator onboarding step 3, email: the backend emails a 6-digit code (valid
+  /// `expires_in` seconds; another can be requested after `resend_after`).
+  Future<Map<String, dynamic>> startEmailVerification(String email) async {
+    final res = await _dio.post('/accounts/creator/verify-email/initiate/', data: {'email': email});
+    return res.data as Map<String, dynamic>;
+  }
+
+  /// Returns the new signup_state on success; a wrong code is a 400 with `attempts_left`.
+  Future<Map<String, dynamic>> confirmEmailCode(String code) async {
+    final res = await _dio.post('/accounts/creator/verify-email/', data: {'code': code});
+    return res.data as Map<String, dynamic>;
+  }
+
+  /// Creator onboarding step 3, phone: the Firebase ID token from a phone sign-in.
+  Future<Map<String, dynamic>> verifyPhone(String firebaseIdToken) async {
+    final res = await _dio.post('/accounts/creator/verify-phone/',
+        data: {'firebase_id_token': firebaseIdToken});
+    return res.data as Map<String, dynamic>;
   }
 }
 

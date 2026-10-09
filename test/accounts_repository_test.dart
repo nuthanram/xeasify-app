@@ -38,12 +38,30 @@ void main() {
     expect(backend.seen.single.data, isNull);
   });
 
-  test('startEmailVerification posts the address to the initiate endpoint', () async {
+  test('startEmailVerification posts the address and returns the resend delay', () async {
     final backend = _FakeBackend({
-      'POST /accounts/creator/verify-email/initiate/': {'status': 'verification_email_sent'},
+      'POST /accounts/creator/verify-email/initiate/': {'status': 'code_sent', 'resend_after': 60},
     });
-    await _repo(backend).startEmailVerification('me@creator.in');
-    expect(backend.seen.single.path, '/accounts/creator/verify-email/initiate/');
+    final result = await _repo(backend).startEmailVerification('me@creator.in');
+    expect(result['resend_after'], 60);
     expect(backend.seen.single.data, {'email': 'me@creator.in'});
+  });
+
+  test('confirmEmailCode posts the code', () async {
+    final backend = _FakeBackend({
+      'POST /accounts/creator/verify-email/': {'status': 'email_verified', 'signup_state': 'metrics_granted'},
+    });
+    final result = await _repo(backend).confirmEmailCode('042817');
+    expect(result['signup_state'], 'metrics_granted');
+    expect(backend.seen.single.data, {'code': '042817'});
+  });
+
+  test('verifyPhone posts the Firebase ID token', () async {
+    final backend = _FakeBackend({
+      'POST /accounts/creator/verify-phone/': {'status': 'phone_verified', 'signup_state': 'verified'},
+    });
+    final result = await _repo(backend).verifyPhone('fb-id-token');
+    expect(result['signup_state'], 'verified');
+    expect(backend.seen.single.data, {'firebase_id_token': 'fb-id-token'});
   });
 }
