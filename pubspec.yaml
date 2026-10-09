@@ -51,5 +51,13 @@ dev_dependencies:
   riverpod_generator: ^2.4.3
   flutter_lints: ^4.0.0
 
+# path_provider_foundation 2.6.0 (pulled in transitively by google_fonts -> path_provider)
+# moved to a native-assets hook that depends on package:objective_c. Compiling that hook
+# fails on Windows whenever the Flutter SDK or project path contains a space (our dev
+# machine's path does), breaking `flutter run`/`flutter build` for every target, not just
+# macOS/iOS. Pinned to the last version before the native-assets hook was introduced.
+dependency_overrides:
+  path_provider_foundation: 2.5.1
+
 flutter:
   uses-material-design: true
