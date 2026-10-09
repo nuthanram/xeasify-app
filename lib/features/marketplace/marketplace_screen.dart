@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
 import '../../core/theme.dart';
+import '../../data/accounts_repository.dart';
 import '../../data/campaigns_repository.dart';
 import '../../widgets/campaign_card.dart';
 import '../../widgets/xb_loader.dart';
@@ -201,45 +203,110 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
   }
 }
 
-class _OnboardingBanner extends StatelessWidget {
+class _OnboardingBanner extends StatefulWidget {
   final WidgetRef ref;
   const _OnboardingBanner({required this.ref});
 
   @override
+  State<_OnboardingBanner> createState() => _OnboardingBannerState();
+}
+
+class _OnboardingBannerState extends State<_OnboardingBanner> {
+  bool _loading = false;
+  String? _error;
+
+  /// Step 2: the metrics scope was already requested during SSO, so this
+  /// just asks the backend to probe the stored token and advance signup_state.
+  Future<void> _grantMetrics() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final result =
+          await widget.ref.read(accountsRepoProvider).grantMetricsAccess();
+      final signupState = result['signup_state'] as String?;
+      if (signupState != null) {
+        await widget.ref.read(authProvider.notifier).updateSignupState(signupState);
+      }
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      setState(() => _error = data is Map && data['error'] != null
+          ? '${data['error']}'
+          : 'Could not verify metrics access (${e.response?.statusCode ?? 'network error'}).');
+    } catch (_) {
+      setState(() => _error = 'Could not verify metrics access. Please try again.');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final auth = ref.watch(authProvider);
+    final auth = widget.ref.watch(authProvider);
     if (auth.role != 'creator') return const SizedBox.shrink();
     if (auth.signupState == 'verified' || auth.signupState == null) {
       return const SizedBox.shrink();
     }
 
-    final String message;
-    if (auth.signupState == 'social_linked') {
-      message = 'STEP 2 OF 3 — Grant metrics access so brands can see your reach stats.';
-    } else {
-      message = 'STEP 3 OF 3 — Verify your phone and email to start applying to campaigns.';
-    }
+    final canGrant = auth.signupState == 'social_linked';
+    final message = canGrant
+        ? 'STEP 2 OF 3 — Grant metrics access so brands can see your reach stats.'
+        : 'STEP 3 OF 3 — Verify your phone and email to start applying to campaigns.';
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       color: kFg,
-      child: Row(children: [
-        const Icon(Icons.info_outline, color: kBg, size: 16),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            message,
-            style: const TextStyle(
-              color: kBg,
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-              height: 1.4,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(children: [
+            const Icon(Icons.info_outline, color: kBg, size: 16),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  color: kBg,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  height: 1.4,
+                ),
+              ),
             ),
-          ),
-        ),
-      ]),
+          ]),
+          if (canGrant) ...[
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              height: 34,
+              child: ElevatedButton(
+                onPressed: _loading ? null : _grantMetrics,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kBg,
+                  foregroundColor: kFg,
+                  shape: const RoundedRectangleBorder(),
+                ),
+                child: _loading
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: kFg),
+                      )
+                    : const Text('GRANT METRICS ACCESS',
+                        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 11, letterSpacing: 1)),
+              ),
+            ),
+          ],
+          if (_error != null) ...[
+            const SizedBox(height: 8),
+            Text('⚠ $_error',
+                style: const TextStyle(color: kBg, fontSize: 10, fontWeight: FontWeight.w600)),
+          ],
+        ],
+      ),
     );
   }
 }
