@@ -30,10 +30,25 @@ class _MarketplaceScreenState extends ConsumerState<MarketplaceScreen> {
   @override
   void initState() {
     super.initState();
+    _syncSignupState();
     _loadAndCheckin();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _runFirstOpenPrompts();
     });
+  }
+
+  /// The stored signup state is only as fresh as the last sign-in; onboarding can advance
+  /// elsewhere (an email link, admin), so re-read it from /accounts/me/.
+  Future<void> _syncSignupState() async {
+    if (ref.read(authProvider).role != 'creator') return;
+    try {
+      final signupState = (await ref.read(accountsRepoProvider).getMe())['signup_state'] as String?;
+      if (signupState != null && mounted) {
+        await ref.read(authProvider.notifier).updateSignupState(signupState);
+      }
+    } catch (_) {
+      // Keep the stored state; the banner is informational and the API enforces access.
+    }
   }
 
   /// First open: app tour, then (only after it closes) the location explanation.
@@ -277,29 +292,31 @@ class _OnboardingBannerState extends State<_OnboardingBanner> {
               ),
             ),
           ]),
-          if (canGrant) ...[
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              height: 34,
-              child: ElevatedButton(
-                onPressed: _loading ? null : _grantMetrics,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: kBg,
-                  foregroundColor: kFg,
-                  shape: const RoundedRectangleBorder(),
-                ),
-                child: _loading
-                    ? const SizedBox(
-                        width: 14,
-                        height: 14,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: kFg),
-                      )
-                    : const Text('GRANT METRICS ACCESS',
-                        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 11, letterSpacing: 1)),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            height: 34,
+            child: ElevatedButton(
+              onPressed: _loading
+                  ? null
+                  : canGrant
+                      ? _grantMetrics
+                      : () => context.push('/verify-contact'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kBg,
+                foregroundColor: kFg,
+                shape: const RoundedRectangleBorder(),
               ),
+              child: _loading
+                  ? const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: kFg),
+                    )
+                  : Text(canGrant ? 'GRANT METRICS ACCESS' : 'VERIFY EMAIL & PHONE',
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11, letterSpacing: 1)),
             ),
-          ],
+          ),
           if (_error != null) ...[
             const SizedBox(height: 8),
             Text('⚠ $_error',

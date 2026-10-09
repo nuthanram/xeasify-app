@@ -41,6 +41,12 @@ class AccountsRepository {
     final res = await _dio.post('/accounts/creator/grant-metrics/');
     return res.data as Map<String, dynamic>;
   }
+
+  /// Creator onboarding step 3 (email half): the backend emails a link that
+  /// confirms the address when opened; it is valid for 24 hours.
+  Future<void> startEmailVerification(String email) async {
+    await _dio.post('/accounts/creator/verify-email/initiate/', data: {'email': email});
+  }
 }
 
 final accountsRepoProvider = Provider<AccountsRepository>(

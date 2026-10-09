@@ -16,6 +16,7 @@ import '../features/deliverable/submit_deliverable_screen.dart';
 import '../features/pricing/pricing_screen.dart';
 import '../features/notifications/notifications_screen.dart';
 import '../features/onboarding/app_tour_screen.dart';
+import '../features/onboarding/verify_contact_screen.dart';
 import '../services/tour_service.dart';
 import '../features/merchant/merchant_dashboard_screen.dart';
 import '../features/merchant/create_campaign_screen.dart';
@@ -144,6 +145,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           path: '/tour/:role',
           builder: (_, s) => AppTourScreen(
               role: TourService.normalizeRole(s.pathParameters['role']))),
+
+      // ── Creator onboarding step 3 (email + phone) ──────────────
+      GoRoute(
+          path: '/verify-contact',
+          builder: (_, __) => const VerifyContactScreen()),
 
       // ── Creator shell (persistent bottom nav) ───────────────────
       StatefulShellRoute.indexedStack(
